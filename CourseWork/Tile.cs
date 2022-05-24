@@ -26,7 +26,7 @@ namespace CourseWork
             {
                 case TileType.GROUND:
                     shape.Texture = Content.GrassTexture;
-                    shape.TextureRect = new IntRect(id * 32, 0, 32, (int)(32 * Location.WORlD_COMPRESSION_Y));
+                    shape.TextureRect = new IntRect(id * 32, 0, 32, (int)(32 * Location.Compression));
                     break;
                 case TileType.TRAIL:
                     shape.FillColor = new(255, 255, 128);
@@ -34,7 +34,7 @@ namespace CourseWork
                 default:
                     break;
             }
-            shape.Scale = new Vector2f(1, Location.WORlD_COMPRESSION_Y);
+            shape.Scale = new Vector2f(1, Location.Compression);
         }
         public void UpdateShadow(double value)
         {
