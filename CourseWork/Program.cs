@@ -16,10 +16,11 @@ namespace CourseWork
             ContextSettings settings = new();
             settings.AntialiasingLevel = 8;
             window = new(new(1280, 720), "Title", Styles.Close, settings);
-            window.Closed += Exit;
-            window.Resized += Resize;
-            Content.Load();
+            window.Closed += (sender, e) => window.Close();
+            window.Resized += (sender, e) => window.SetView(new(new FloatRect(0, 0, e.Width, e.Height)));
             Game = new();
+            Content.Load();
+            window.KeyPressed += Game.KeyPressed;
             while ( window.IsOpen) {
                 
                 window.DispatchEvents();
@@ -28,15 +29,6 @@ namespace CourseWork
                 Game.Draw();
                 window.Display();
             }
-        }
-        private static void Exit(object sender, EventArgs e)
-        {
-            window.Close();
-        }
-        private static void Resize(object sender, SFML.Window.SizeEventArgs e)
-        {
-            window.SetView(new(new FloatRect(0,0, e.Width, e.Height)));
-            //Game.player.location.UpdatePosition();
         }
     }
 }

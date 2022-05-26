@@ -5,6 +5,7 @@ namespace CourseWork
 {
     public class Game
     {
+        public EventHandler<KeyEventArgs> KeyPressed;
         private World world;
         private Clock clock;
         private GameSettings settings = new GameSettings()
@@ -15,17 +16,49 @@ namespace CourseWork
         public GameSettings Settings { get { return settings; } set { settings = value; } }
         public Game()
         {
-            world = new(3);
+            KeyPressed = MovePlayer;
+            world = new(1);
             clock = new Clock();
         }
-        void Update()
+        public void Update()
         {
             world.Update(clock.ElapsedTime.AsMilliseconds());
+            //Game stats
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine($"Player position: X({(int)world.Player.Position.X}) Y({(int)world.Player.Position.Y}) [{(int)world.Player.Position.X / Tile.TILE_SIZE}][{(int)world.Player.Position.Y / Tile.TILE_SIZE}]          ");
+            Console.WriteLine($"Camera position: X({-(int)world.Position.X}) Y({-(int)world.Position.Y})      ");
+            Console.WriteLine($"Camera X: [{0 - (int)world.Position.X / Tile.TILE_SIZE},{Program.Window.Size.X / Tile.TILE_SIZE + 1 - (int)world.Position.X / Tile.TILE_SIZE}]    ");
+            Console.WriteLine($"Camera Y: [{0 - (int)world.Position.Y / Tile.TILE_SIZE},{Program.Window.Size.Y / Tile.TILE_SIZE + 1 - (int)world.Position.Y / Tile.TILE_SIZE}]    ");
+            //Console.WriteLine((int)(1000 / clock.ElapsedTime.AsMilliseconds()) + "fps  ");
+            //
             clock.Restart();
+            
         }
-        void Draw()
+        public void Draw()
         {
-
+            Program.Window.Draw(world);
+        }
+        public void MovePlayer(object? sender, KeyEventArgs e)
+        {
+            switch (e.Code)
+            {
+                case Keyboard.Key.A:
+                    world.Player.Movement.X = -world.Player.MovementSpeed;
+                    break;
+                case Keyboard.Key.D:
+                    world.Player.Movement.X = world.Player.MovementSpeed;
+                    break;
+                case Keyboard.Key.W:
+                    world.Player.Movement.Y = -world.Player.MovementSpeed;
+                    break;
+                case Keyboard.Key.S:
+                    world.Player.Movement.Y = world.Player.MovementSpeed;
+                    break;
+                default:
+                    break;
+            }
+            Update();
+            Draw();
         }
     }
     public struct GameSettings

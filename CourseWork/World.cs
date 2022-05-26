@@ -14,7 +14,7 @@ namespace CourseWork
     {
         private List<Location> locations;
         private RectangleShape darkness;
-        private Player player;
+        public Player Player;
         private RectangleShape boundsRectangle;
         public float Compression { get; set; } = 0.5f;
         public List<Location> Locations { get { return locations; } }
@@ -22,35 +22,36 @@ namespace CourseWork
         {
             boundsRectangle = new();
             locations = new();
-            for(int i = 0; i < locationsCount; i++)
+            for (int i = 0; i < locationsCount; i++)
             {
                 locations.Add(new Glade());
             }
-            player = new(locations.First());
-            darkness = new(new Vector2f(player.VisibilityRadius * 2 * Tile.TILE_SIZE * 1.1f, player.VisibilityRadius * 2 * Compression * Tile.TILE_SIZE * 1.1f));
+            Player = new(locations.First());
+            Player.Position = locations.First().StartPosition;
+            darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TILE_SIZE * 1.1f, Player.VisibilityRadius * 2 * Compression * Tile.TILE_SIZE * 1.1f));
             darkness.Origin = darkness.Size / 2;
             darkness.Texture = Content.DarknessTexture;
         }
         public void Update(int deltatime)
         {
-            player.Update(deltatime);
-            darkness.Position = player.Position;
+            Player.Update(deltatime);
+            darkness.Position = Player.Position;
             UpdatePosition();
             foreach (Location location in Locations)
             {
-                location.UpdateDrawableObjects(player);
+                location.UpdateDrawableObjects(Player);
             }
         }
         public void UpdatePosition()
         {
             Vector2f curPosition = Position;
-            if (player.Position.X - curPosition.X > Program.Window.Size.X / 2 && boundsRectangle.Size.X * Tile.TILE_SIZE - player.Position.X > Program.Window.Size.X / 2)
+            if (Player.Position.X - curPosition.X > Program.Window.Size.X / 2 && boundsRectangle.Size.X * Tile.TILE_SIZE - Player.Position.X > Program.Window.Size.X / 2)
             {
-                curPosition.X = -player.Position.X + Program.Window.Size.X / 2;
+                curPosition.X = -Player.Position.X + Program.Window.Size.X / 2;
             }
-            if (player.Position.Y - curPosition.Y > Program.Window.Size.Y / 2 && boundsRectangle.Size.Y * Tile.TILE_SIZE * Compression - player.Position.Y > Program.Window.Size.Y / 2)
+            if (Player.Position.Y - curPosition.Y > Program.Window.Size.Y / 2 && boundsRectangle.Size.Y * Tile.TILE_SIZE * Compression - Player.Position.Y > Program.Window.Size.Y / 2)
             {
-                curPosition.Y = -player.Position.Y + Program.Window.Size.Y / 2;
+                curPosition.Y = -Player.Position.Y + Program.Window.Size.Y / 2;
             }
             if (curPosition.X + boundsRectangle.Size.X * Tile.TILE_SIZE < Program.Window.Size.X)
             {
@@ -66,16 +67,9 @@ namespace CourseWork
         {
             foreach (Location location in locations)
             {
-                if (location != player.Location)
-                {
-                    location.DrawFloor(target, states);
-                    location.Draw(target, states);
-                }
+                location.Draw(target, states);
             }
-            player.Location.DrawFloor(target, states);
-            target.Draw(player, states);
             target.Draw(darkness, states);
-            player.Location.Draw(target, states);
         }
     }
 }

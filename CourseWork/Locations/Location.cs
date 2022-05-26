@@ -14,8 +14,8 @@ namespace CourseWork
         protected Random random;
         protected Tile[][] tiles;
         protected PriorityQueue<Drawable, float> drawableObjects;
+        public List<IObject> Objects { get; set; }
         public Vector2f StartPosition { get; set; }
-
 
         public Location()
         {
@@ -32,7 +32,7 @@ namespace CourseWork
                 }
             }
             StartPosition = new Vector2f(15 * Tile.TILE_SIZE, 15 * Tile.TILE_SIZE * Compression);
-            
+            Objects = new();
 
             
         }
@@ -44,14 +44,6 @@ namespace CourseWork
         }
         public void Draw(RenderTarget target, RenderStates states)
         {
-            while (drawableObjects.Count > 0)
-            {
-                target.Draw(drawableObjects.Dequeue(), states);
-            }
-            
-        }
-        public void DrawFloor(RenderTarget target, RenderStates states)
-        {
             states.Transform *= Transform;
             for (int i = (int)(firstDrawingPoint.Y / Tile.TILE_SIZE / Compression); i < (int)(lastDrawingPoint.Y / Tile.TILE_SIZE / Compression); i++)
             {
@@ -61,6 +53,11 @@ namespace CourseWork
                     target.Draw(tiles[i][j], states);
                 }
             }
+            while (drawableObjects.Count > 0)
+            {
+                target.Draw(drawableObjects.Dequeue(), states);
+            }
+            
         }
     }
 }

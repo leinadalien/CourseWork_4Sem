@@ -12,10 +12,13 @@ namespace CourseWork.Entities
     {
         public float MovementSpeed = 0.15f;
         public Vector2f Movement;
+        private Vector2f prevPosition;
         public Location Location { get; set; }
         public Player(Location location)
         {
+            shape.FillColor = Color.Blue;
             Location = location;
+            prevPosition = Position;
         }
         public override void Draw(RenderTarget target, RenderStates states)
         {
@@ -24,6 +27,7 @@ namespace CourseWork.Entities
         public void Update(int deltaTime)
         {
             UpdateMove(deltaTime);
+            UpdateCollision();
         }
         private void UpdateMove(int deltaTime)
         {
@@ -49,6 +53,20 @@ namespace CourseWork.Entities
             }
             //
             Position = curPosition;
+        }
+        private void UpdateCollision()
+        {
+            foreach (var collisionObject in Location.Objects)
+            {
+                if (Intersects(collisionObject))
+                {
+                    Position = prevPosition;
+                }
+                else
+                {
+                    prevPosition = Position;
+                }
+            }
         }
     }
 }
