@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace CourseWork
 {
-    public abstract class Entity : Transformable, Drawable, IObject
+    public abstract class Entity : Transformable, IObject
     {
         public int VisibilityRadius { get; set; } = 10;
         protected RectangleShape shape = new(new Vector2f(32, 64));

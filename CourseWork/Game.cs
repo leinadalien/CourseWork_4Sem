@@ -6,6 +6,7 @@ namespace CourseWork
     public class Game
     {
         public EventHandler<KeyEventArgs> KeyPressed;
+        public EventHandler<KeyEventArgs> KeyReleased;
         private World world;
         private Clock clock;
         private GameSettings settings = new GameSettings()
@@ -17,6 +18,7 @@ namespace CourseWork
         public Game()
         {
             KeyPressed = MovePlayer;
+            KeyReleased = MovementKeyReleased;
             world = new(1);
             clock = new Clock();
         }
@@ -38,7 +40,7 @@ namespace CourseWork
         {
             Program.Window.Draw(world);
         }
-        public void MovePlayer(object? sender, KeyEventArgs e)
+        private void MovePlayer(object? sender, KeyEventArgs e)
         {
             switch (e.Code)
             {
@@ -53,6 +55,56 @@ namespace CourseWork
                     break;
                 case Keyboard.Key.S:
                     world.Player.Movement.Y = world.Player.MovementSpeed;
+                    break;
+                default:
+                    break;
+            }
+            Update();
+            Draw();
+        }
+        private void MovementKeyReleased(object? sender, KeyEventArgs e)
+        {
+            switch (e.Code)
+            {
+                case Keyboard.Key.A:
+                    if (!Keyboard.IsKeyPressed(Keyboard.Key.D))
+                    {
+                        world.Player.Movement.X = 0;
+                    }
+                    else
+                    {
+                        world.Player.Movement.X = world.Player.MovementSpeed;
+                    }
+                    break;
+                case Keyboard.Key.D:
+                    if (!Keyboard.IsKeyPressed(Keyboard.Key.A))
+                    {
+                        world.Player.Movement.X = 0;
+                    }
+                    else
+                    {
+                        world.Player.Movement.X = -world.Player.MovementSpeed;
+                    }
+                    break;
+                case Keyboard.Key.W:
+                    if (!Keyboard.IsKeyPressed(Keyboard.Key.S))
+                    {
+                        world.Player.Movement.Y = 0;
+                    }
+                    else
+                    {
+                        world.Player.Movement.Y = world.Player.MovementSpeed;
+                    }
+                    break;
+                case Keyboard.Key.S:
+                    if (!Keyboard.IsKeyPressed(Keyboard.Key.W))
+                    {
+                        world.Player.Movement.Y = 0;
+                    }
+                    else
+                    {
+                        world.Player.Movement.Y = -world.Player.MovementSpeed;
+                    }
                     break;
                 default:
                     break;

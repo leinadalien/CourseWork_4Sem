@@ -1,5 +1,6 @@
 ﻿using CourseWork.Entities;
 using CourseWork.Locations;
+using CourseWork.Objects;
 using SFML.Graphics;
 using SFML.System;
 using System;
@@ -22,10 +23,14 @@ namespace CourseWork
         {
             boundsRectangle = new();
             locations = new();
-            for (int i = 0; i < locationsCount; i++)
+            for(int i = 0; i < locationsCount; i++)
             {
                 locations.Add(new Glade());
             }
+            //var obj = new Stone();
+            
+            //obj.Position = new(15,15);
+            //locations.First().Objects.Add(obj);
             Player = new(locations.First());
             Player.Position = locations.First().StartPosition;
             darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TILE_SIZE * 1.1f, Player.VisibilityRadius * 2 * Compression * Tile.TILE_SIZE * 1.1f));
@@ -67,8 +72,14 @@ namespace CourseWork
         {
             foreach (Location location in locations)
             {
-                location.Draw(target, states);
+                if (location != Player.Location)
+                {
+                    location.Draw(target, states);
+                }
             }
+            Player.Location.Draw(target, states);
+            target.Draw(Player, states);
+
             target.Draw(darkness, states);
         }
     }

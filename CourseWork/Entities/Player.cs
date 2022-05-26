@@ -16,12 +16,14 @@ namespace CourseWork.Entities
         public Location Location { get; set; }
         public Player(Location location)
         {
+            Origin = new(Size.X / 2, Size.Y);
             shape.FillColor = Color.Blue;
             Location = location;
             prevPosition = Position;
         }
         public override void Draw(RenderTarget target, RenderStates states)
         {
+            states.Transform *= Transform;
             target.Draw(shape, states);
         }
         public void Update(int deltaTime)

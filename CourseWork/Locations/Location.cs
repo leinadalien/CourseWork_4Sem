@@ -40,7 +40,6 @@ namespace CourseWork
         {
             firstDrawingPoint = (entity.Position - new Vector2f(entity.VisibilityRadius * Tile.TILE_SIZE, entity.VisibilityRadius * Tile.TILE_SIZE * Compression)) - Position;
             lastDrawingPoint = (entity.Position + new Vector2f(entity.VisibilityRadius * Tile.TILE_SIZE, entity.VisibilityRadius * Tile.TILE_SIZE * Compression)) - Position;
-            drawableObjects.Enqueue(entity, entity.Position.Y);
         }
         public void Draw(RenderTarget target, RenderStates states)
         {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CourseWork
 {
-    public interface IObject
+    public interface IObject : Drawable
     {
         public FloatRect GlobalBounds { get; }
         public bool Intersects(IObject other);
