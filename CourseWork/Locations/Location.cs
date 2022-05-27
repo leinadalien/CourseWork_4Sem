@@ -7,19 +7,18 @@ namespace CourseWork
     {
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
+        protected FloatRect drawingBounds;
         public int Height { get; private set; } = 32;
         public int Width { get; private set; } = 32;
         public static float Compression { get; private set; } = 0.5f;
         
         protected Random random;
         protected Tile[][] tiles;
-        protected PriorityQueue<Drawable, float> drawableObjects;
-        public List<IObject> Objects { get; set; }
+        public List<Object> Objects { get;}
         public Vector2f StartPosition { get; set; }
 
         public Location()
         {
-            drawableObjects = new();
             random = new();
             tiles = new Tile[Height][];
             for (int i = 0; i < Height; i++)
@@ -36,10 +35,25 @@ namespace CourseWork
 
             
         }
+        public void AddObject(Object obj)
+        {
+            int index = 0;
+
+            while (index < Objects.Count && obj.CompareTo(Objects[index]) >= 1)
+            {
+                index++;
+            }
+            Objects.Insert(index, obj);
+        }
+        public void RemoveObject(Object obj)
+        {
+            Objects.Remove(obj);
+        }
         public virtual void UpdateDrawableObjects(Entity entity)
         {
             firstDrawingPoint = (entity.Position - new Vector2f(entity.VisibilityRadius * Tile.TILE_SIZE, entity.VisibilityRadius * Tile.TILE_SIZE * Compression)) - Position;
-            lastDrawingPoint = (entity.Position + new Vector2f(entity.VisibilityRadius * Tile.TILE_SIZE, entity.VisibilityRadius * Tile.TILE_SIZE * Compression)) - Position;
+            lastDrawingPoint = (entity.Position + new Vector2f((entity.VisibilityRadius + 1) * Tile.TILE_SIZE, (entity.VisibilityRadius + 1) * Tile.TILE_SIZE * Compression)) - Position;
+            drawingBounds = new(firstDrawingPoint, new(lastDrawingPoint.X - firstDrawingPoint.X, lastDrawingPoint.Y - firstDrawingPoint.Y));
         }
         public void Draw(RenderTarget target, RenderStates states)
         {
@@ -52,9 +66,12 @@ namespace CourseWork
                     target.Draw(tiles[i][j], states);
                 }
             }
-            while (drawableObjects.Count > 0)
+            foreach (var drawableObject in Objects)
             {
-                target.Draw(drawableObjects.Dequeue(), states);
+                if (drawingBounds.Contains(drawableObject.Position.X, drawableObject.Position.Y))
+                {
+                    target.Draw(drawableObject, states);
+                }
             }
             
         }

@@ -19,7 +19,7 @@ namespace CourseWork
         {
             KeyPressed = MovePlayer;
             KeyReleased = MovementKeyReleased;
-            world = new(1);
+            world = new(2);
             clock = new Clock();
         }
         public void Update()
@@ -59,8 +59,6 @@ namespace CourseWork
                 default:
                     break;
             }
-            Update();
-            Draw();
         }
         private void MovementKeyReleased(object? sender, KeyEventArgs e)
         {
@@ -109,8 +107,6 @@ namespace CourseWork
                 default:
                     break;
             }
-            Update();
-            Draw();
         }
     }
     public struct GameSettings

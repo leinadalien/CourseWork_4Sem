@@ -14,9 +14,13 @@ namespace CourseWork.Entities
         public Vector2f Movement;
         private Vector2f prevPosition;
         public Location Location { get; set; }
+        public override FloatRect Bounds { get { return new(new Vector2f(Position.X - Origin.X, Position.Y - size.Z * Location.Compression), new(size.X, size.Z * Location.Compression)); } }
         public Player(Location location)
         {
-            Origin = new(Size.X / 2, Size.Y);
+            MovementSpeed = 0.3f;
+            VisibilityRadius = 20;
+            size = new(32, 64, 32);
+            Origin = new(size.X / 2, size.Y);
             shape.FillColor = Color.Blue;
             Location = location;
             prevPosition = Position;
@@ -36,18 +40,18 @@ namespace CourseWork.Entities
             Position += Movement * deltaTime;
 
             Vector2f curPosition = Position;
-            if (curPosition.X < Size.X / 2)
+            if (curPosition.X < size.X / 2)
             {
-                curPosition.X = Size.X / 2;
+                curPosition.X = size.X / 2;
             }
-            if (curPosition.Y < Size.Y)
+            if (curPosition.Y < size.Y)
             {
-                curPosition.Y = Size.Y;
+                curPosition.Y = size.Y;
             }
             //need fix
-            if (curPosition.X > Program.Window.Size.X - Location.Position.X - Size.X / 2)
+            if (curPosition.X > Program.Window.Size.X - Location.Position.X - size.X / 2)
             {
-                curPosition.X = Program.Window.Size.X - Location.Position.X - Size.X / 2;
+                curPosition.X = Program.Window.Size.X - Location.Position.X - size.X / 2;
             }
             if (curPosition.Y > Program.Window.Size.Y - Location.Position.Y)
             {
@@ -62,13 +66,19 @@ namespace CourseWork.Entities
             {
                 if (Intersects(collisionObject))
                 {
-                    Position = prevPosition;
-                }
-                else
-                {
-                    prevPosition = Position;
+                    Vector2f tempPosition = Position;
+                    if (prevPosition.X != Position.X)
+                    {
+                        tempPosition.X = prevPosition.X;
+                    }
+                    if (prevPosition.Y != Position.Y)
+                    {
+                        tempPosition.Y = prevPosition.Y;
+                    }
+                    Position = tempPosition;
                 }
             }
+            prevPosition = Position;
         }
     }
 }

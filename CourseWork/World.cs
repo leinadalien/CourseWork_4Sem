@@ -27,10 +27,14 @@ namespace CourseWork
             {
                 locations.Add(new Glade());
             }
-            //var obj = new Stone();
-            
-            //obj.Position = new(15,15);
-            //locations.First().Objects.Add(obj);
+            locations.Last().Position = new(600, 600);
+            boundsRectangle.Size = new(2000, 1112);
+            var obj = new Stone();
+            obj.Position = new(100,100);
+            locations.First().AddObject(obj);
+            var obj2 = new Stone();
+            obj2.Position = new(100, 100);
+            locations.Last().AddObject(obj2);
             Player = new(locations.First());
             Player.Position = locations.First().StartPosition;
             darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TILE_SIZE * 1.1f, Player.VisibilityRadius * 2 * Compression * Tile.TILE_SIZE * 1.1f));
@@ -45,41 +49,39 @@ namespace CourseWork
             foreach (Location location in Locations)
             {
                 location.UpdateDrawableObjects(Player);
+                
             }
         }
         public void UpdatePosition()
         {
             Vector2f curPosition = Position;
-            if (Player.Position.X - curPosition.X > Program.Window.Size.X / 2 && boundsRectangle.Size.X * Tile.TILE_SIZE - Player.Position.X > Program.Window.Size.X / 2)
+            if (Player.Position.X - curPosition.X > Program.Window.Size.X / 2 && boundsRectangle.Size.X - Player.Position.X > Program.Window.Size.X / 2)
             {
                 curPosition.X = -Player.Position.X + Program.Window.Size.X / 2;
             }
-            if (Player.Position.Y - curPosition.Y > Program.Window.Size.Y / 2 && boundsRectangle.Size.Y * Tile.TILE_SIZE * Compression - Player.Position.Y > Program.Window.Size.Y / 2)
+            if (Player.Position.Y - curPosition.Y > Program.Window.Size.Y / 2 && boundsRectangle.Size.Y - Player.Position.Y > Program.Window.Size.Y / 2)
             {
                 curPosition.Y = -Player.Position.Y + Program.Window.Size.Y / 2;
             }
-            if (curPosition.X + boundsRectangle.Size.X * Tile.TILE_SIZE < Program.Window.Size.X)
+            if (curPosition.X + boundsRectangle.Size.X < Program.Window.Size.X)
             {
-                curPosition.X = -boundsRectangle.Size.X * Tile.TILE_SIZE + Program.Window.Size.X;
+                curPosition.X = -boundsRectangle.Size.X + Program.Window.Size.X;
             }
-            if (curPosition.Y + boundsRectangle.Size.Y * Tile.TILE_SIZE * Compression < Program.Window.Size.Y)
+            if (curPosition.Y + boundsRectangle.Size.Y < Program.Window.Size.Y)
             {
-                curPosition.Y = -boundsRectangle.Size.Y * Tile.TILE_SIZE * Compression + Program.Window.Size.Y;
+                curPosition.Y = -boundsRectangle.Size.Y + Program.Window.Size.Y;
             }
             Position = curPosition;
         }
         public void Draw(RenderTarget target, RenderStates states)
         {
+            states.Transform *= Transform;
+            Player.Location.AddObject(Player);
             foreach (Location location in locations)
             {
-                if (location != Player.Location)
-                {
-                    location.Draw(target, states);
-                }
+                location.Draw(target, states);
             }
-            Player.Location.Draw(target, states);
-            target.Draw(Player, states);
-
+            Player.Location.RemoveObject(Player);
             target.Draw(darkness, states);
         }
     }
