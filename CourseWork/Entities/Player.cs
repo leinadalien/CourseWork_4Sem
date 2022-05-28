@@ -61,38 +61,37 @@ namespace CourseWork.Entities
             {
                 curPosition.Y = size.Y;
             }
-            //TODO
             if (curPosition.X > movementBounds.Width - size.X / 2)
             {
                 curPosition.X = movementBounds.Width - size.X / 2;
             }
-            if (curPosition.Y > movementBounds.Height - Location.Position.Y)
+            if (curPosition.Y > movementBounds.Height)
             {
-                curPosition.Y = movementBounds.Height - Location.Position.Y;
+                curPosition.Y = movementBounds.Height;
             }
-            //
             Position = curPosition;
         }
         private void UpdateCollision()
         {
+            Position -= Location.Position;
+            prevPosition -= Location.Position;
             foreach (var collisionObject in Location.Objects)
             {
-                Position -= Location.Position;
                 if (Intersects(collisionObject))
                 {
-                    Vector2f tempPosition = Position;
-                    if (prevPosition.X != Position.X)
+                    Vector2f insidePosition = new(Position.X, Position.Y);
+                    Position = new(prevPosition.X, insidePosition.Y);
+                    if (Intersects(collisionObject))
                     {
-                        tempPosition.X = prevPosition.X;
+                        Position = new(insidePosition.X, prevPosition.Y);
+                        if (Intersects(collisionObject))
+                        {
+                            Position = prevPosition;
+                        }
                     }
-                    if (prevPosition.Y != Position.Y)
-                    {
-                        tempPosition.Y = prevPosition.Y;
-                    }
-                    Position = tempPosition;
                 }
-                Position += Location.Position;
             }
+            Position += Location.Position;
             prevPosition = Position;
         }
     }

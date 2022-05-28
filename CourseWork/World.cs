@@ -16,7 +16,7 @@ namespace CourseWork
         private List<Location> locations;
         private RectangleShape darkness;
         public Player Player;
-        private FloatRect bounds { get { return new(Position, new(1624, 1712)); } }
+        private FloatRect bounds { get { return new(Position, new(1624, 1112)); } }
         public float Compression { get; set; } = 0.5f;
         public List<Location> Locations { get { return locations; } }
         public World(int locationsCount)
@@ -65,13 +65,13 @@ namespace CourseWork
                 curPosition.Y = 0;
             }
             //TODO
-            if (bounds.Width + curPosition.X < 0)
+            if (curPosition.X < Program.Window.Size.X - bounds.Width)
             {
-                curPosition.X = -bounds.Width;
+                curPosition.X = Program.Window.Size.X - bounds.Width;
             }
-            if (bounds.Height + curPosition.Y < 0)
+            if (curPosition.Y < Program.Window.Size.Y - bounds.Height)
             {
-                curPosition.Y = -bounds.Height;
+                curPosition.Y = Program.Window.Size.Y - bounds.Height;
             }
             Position = curPosition;
         }
