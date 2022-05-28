@@ -16,8 +16,7 @@ namespace CourseWork
         private List<Location> locations;
         private RectangleShape darkness;
         public Player Player;
-        private FloatRect bounds { get { return new(Position, new(1624, 1112)); } }
-        public float Compression { get; set; } = 0.5f;
+        private FloatRect bounds { get { return new(Position, new(1624, 1112)); } }//TODO
         public List<Location> Locations { get { return locations; } }
         public World(int locationsCount)
         {
@@ -26,16 +25,25 @@ namespace CourseWork
             {
                 locations.Add(new Glade());
             }
-            locations.Last().Position = new(600, 600);
+            locations.Last().Position = new(500, 512);
+
             var obj = new Stone();
             obj.Position = new(100,100);
             locations.First().AddObject(obj);
+            
             var obj2 = new Stone();
             obj2.Position = new(100, 100);
             locations.Last().AddObject(obj2);
-            Player = new(locations.First(), bounds);
-            Player.Position = locations.First().StartPosition;
-            darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TILE_SIZE * 1.1f, Player.VisibilityRadius * 2 * Compression * Tile.TILE_SIZE * 1.1f));
+
+            Door door = new(new(new Vector2f(762,512), new(200,64)));
+            foreach(Location location in locations)
+            {
+                location.Doors.Add(door);
+            }
+
+            Player = new(locations.Last());
+            Player.Position = locations.Last().StartPosition + locations.Last().Position;
+            darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TILE_SIZE * 1.1f, Player.VisibilityRadius * 2 * Location.Compression * Tile.TILE_SIZE * 1.1f));
             darkness.Origin = darkness.Size / 2;
             darkness.Texture = Content.DarknessTexture;
         }
@@ -64,7 +72,6 @@ namespace CourseWork
             {
                 curPosition.Y = 0;
             }
-            //TODO
             if (curPosition.X < Program.Window.Size.X - bounds.Width)
             {
                 curPosition.X = Program.Window.Size.X - bounds.Width;

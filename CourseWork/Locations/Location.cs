@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using CourseWork.Objects;
+using SFML.Graphics;
 using SFML.System;
 
 namespace CourseWork
@@ -9,10 +10,10 @@ namespace CourseWork
         protected Vector2f lastDrawingPoint;
         protected FloatRect drawingBounds;
         public FloatRect Bounds { get { return new(Position, new(Width * Tile.TILE_SIZE, Height * Tile.TILE_SIZE * Compression)); } }
-        public int Height { get; private set; } = 32;
+        public int Height { get; private set; } = 32;//TOFIX
         public int Width { get; private set; } = 32;
         public static float Compression { get; private set; } = 0.5f;
-        
+        public List<Door> Doors { get;}
         protected Random random;
         protected Tile[][] tiles;
         public List<Object> Objects { get;}
@@ -33,7 +34,7 @@ namespace CourseWork
             }
             StartPosition = new Vector2f(15 * Tile.TILE_SIZE, 15 * Tile.TILE_SIZE * Compression);
             Objects = new();
-
+            Doors = new();
             
         }
         public void AddObject(Object obj)
@@ -67,9 +68,17 @@ namespace CourseWork
                     target.Draw(tiles[i][j], states);
                 }
             }
+            //DOORS
+            foreach (var door in Doors)
+            {
+                door.Position -= Position;
+                target.Draw(door, states);
+                door.Position += Position;
+            }
+            //
             foreach (var drawableObject in Objects)
             {
-                if (drawingBounds.Contains(drawableObject.Position.X, drawableObject.Position.Y))
+                if (drawingBounds.Intersects(drawableObject.Bounds))
                 {
                     target.Draw(drawableObject, states);
                 }

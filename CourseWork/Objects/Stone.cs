@@ -13,15 +13,9 @@ namespace CourseWork.Objects
         public Stone()
         {
             Origin = new(0, size.Y);
-            shape.FillColor = Color.White;
+            shape.FillColor = new(54, 54, 54);
         }
 
-        public override FloatRect Bounds { get { return new(new Vector2f(Position.X, Position.Y - size.Z * Location.Compression), new(size.X, size.Y * Location.Compression)); } }
-
-        public override void Draw(RenderTarget target, RenderStates states)
-        {
-            states.Transform *= Transform;
-            target.Draw(shape, states);
-        }
+        public override FloatRect Bounds {get { return new(new Vector2f(Position.X, Position.Y - size.Z * Location.Compression), new(size.X, size.Y * Location.Compression)); } }
     }
 }

@@ -14,9 +14,8 @@ namespace CourseWork.Entities
         public Vector2f Movement;
         private Vector2f prevPosition;
         public Location Location { get; set; }
-        private FloatRect movementBounds;
         public override FloatRect Bounds { get { return new(new Vector2f(Position.X - Origin.X, Position.Y - size.Z * Location.Compression), new(size.X, size.Z * Location.Compression)); } }
-        public Player(Location location, FloatRect movementBounds)
+        public Player(Location location)
         {
             MovementSpeed = 0.3f;
             VisibilityRadius = 20;
@@ -25,18 +24,6 @@ namespace CourseWork.Entities
             shape.FillColor = Color.Blue;
             Location = location;
             prevPosition = Position;
-            this.movementBounds = movementBounds;
-        }
-        public Player(Player other)
-        {
-            MovementSpeed = other.MovementSpeed;
-            VisibilityRadius = other.VisibilityRadius;
-            size = other.size;
-            Origin = other.Origin;
-            shape.FillColor = other.shape.FillColor;
-            Location = other.Location;
-            prevPosition = other.prevPosition;
-            Position = new(other.Position.X, other.Position.Y);
         }
         public override void Draw(RenderTarget target, RenderStates states)
         {
@@ -50,26 +37,37 @@ namespace CourseWork.Entities
         }
         private void UpdateMove(int deltaTime)
         {
-            Position += Movement * deltaTime;
-
-            Vector2f curPosition = Position;
-            if (curPosition.X < size.X / 2)
+            Position += new Vector2f(Movement.X * deltaTime, Movement.Y * deltaTime * Location.Compression);
+            Vector2f localPosition = Position - Location.Position;
+            if (localPosition.X < Origin.X)
             {
-                curPosition.X = size.X / 2;
+                localPosition.X = Origin.X;
             }
-            if (curPosition.Y < size.Y)
+            if (localPosition.Y < Bounds.Height)
             {
-                curPosition.Y = size.Y;
+                localPosition.Y = Bounds.Height;
             }
-            if (curPosition.X > movementBounds.Width - size.X / 2)
+            if (localPosition.X > Location.Width * Tile.TILE_SIZE - Origin.X)
             {
-                curPosition.X = movementBounds.Width - size.X / 2;
+                localPosition.X = Location.Width * Tile.TILE_SIZE - Origin.X;
             }
-            if (curPosition.Y > movementBounds.Height)
+            if (localPosition.Y > Location.Height * Tile.TILE_SIZE * Location.Compression)
             {
-                curPosition.Y = movementBounds.Height;
+                localPosition.Y = Location.Height * Tile.TILE_SIZE * Location.Compression;
             }
-            Position = curPosition;
+            bool isInDoor = false;
+            foreach (var door in Location.Doors)
+            {
+                if (door.Bounds.Contains(Bounds.Left, Bounds.Top) && door.Bounds.Contains(Bounds.Left + Bounds.Width, Bounds.Top + Bounds.Height))
+                {
+                    isInDoor = true;
+                    break;
+                }
+            }
+            if (!isInDoor)
+            {
+                Position = localPosition + Location.Position;
+            }
         }
         private void UpdateCollision()
         {
