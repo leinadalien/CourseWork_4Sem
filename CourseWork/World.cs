@@ -16,19 +16,17 @@ namespace CourseWork
         private List<Location> locations;
         private RectangleShape darkness;
         public Player Player;
-        private RectangleShape boundsRectangle;
+        private FloatRect bounds { get { return new(Position, new(1200, 1200)); } }
         public float Compression { get; set; } = 0.5f;
         public List<Location> Locations { get { return locations; } }
         public World(int locationsCount)
         {
-            boundsRectangle = new();
             locations = new();
             for(int i = 0; i < locationsCount; i++)
             {
                 locations.Add(new Glade());
             }
             locations.Last().Position = new(600, 600);
-            boundsRectangle.Size = new(2000, 1112);
             var obj = new Stone();
             obj.Position = new(100,100);
             locations.First().AddObject(obj);
@@ -46,41 +44,47 @@ namespace CourseWork
             Player.Update(deltatime);
             darkness.Position = Player.Position;
             UpdatePosition();
-            foreach (Location location in Locations)
+            foreach (Location location in locations)
             {
                 location.UpdateDrawableObjects(Player);
-                
+                if (Player.Bounds.Intersects(location.Bounds) && Player.Location != location)
+                {
+                    Player.Location = location;
+                }
             }
         }
         public void UpdatePosition()
         {
-            Vector2f curPosition = Position;
-            if (Player.Position.X - curPosition.X > Program.Window.Size.X / 2 && boundsRectangle.Size.X - Player.Position.X > Program.Window.Size.X / 2)
+            Vector2f curPosition = new(Program.Window.Size.X / 2 - Player.Position.X, Program.Window.Size.Y / 2 - Player.Position.Y);
+            if (curPosition.X > 0)
             {
-                curPosition.X = -Player.Position.X + Program.Window.Size.X / 2;
+                curPosition.X = 0;
             }
-            if (Player.Position.Y - curPosition.Y > Program.Window.Size.Y / 2 && boundsRectangle.Size.Y - Player.Position.Y > Program.Window.Size.Y / 2)
+            if (curPosition.Y > 0)
             {
-                curPosition.Y = -Player.Position.Y + Program.Window.Size.Y / 2;
+                curPosition.Y = 0;
             }
-            if (curPosition.X + boundsRectangle.Size.X < Program.Window.Size.X)
+            if (bounds.Width + curPosition.X < 0)
             {
-                curPosition.X = -boundsRectangle.Size.X + Program.Window.Size.X;
+                curPosition.X = -bounds.Width;
             }
-            if (curPosition.Y + boundsRectangle.Size.Y < Program.Window.Size.Y)
+            if (bounds.Height + curPosition.Y < 0)
             {
-                curPosition.Y = -boundsRectangle.Size.Y + Program.Window.Size.Y;
+                curPosition.Y = -bounds.Height;
             }
             Position = curPosition;
         }
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
+            Player drawingPlayer = new(Player);
+            Player.Position -= Player.Location.Position;
             Player.Location.AddObject(Player);
             foreach (Location location in locations)
             {
                 location.Draw(target, states);
             }
+            Player.Position += Player.Location.Position;
             Player.Location.RemoveObject(Player);
             target.Draw(darkness, states);
         }

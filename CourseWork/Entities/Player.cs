@@ -25,6 +25,17 @@ namespace CourseWork.Entities
             Location = location;
             prevPosition = Position;
         }
+        public Player(Player other)
+        {
+            MovementSpeed = other.MovementSpeed;
+            VisibilityRadius = other.VisibilityRadius;
+            size = other.size;
+            Origin = other.Origin;
+            shape.FillColor = other.shape.FillColor;
+            Location = other.Location;
+            prevPosition = other.prevPosition;
+            Position = new(other.Position.X, other.Position.Y);
+        }
         public override void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
@@ -48,7 +59,7 @@ namespace CourseWork.Entities
             {
                 curPosition.Y = size.Y;
             }
-            //need fix
+            //TODO
             if (curPosition.X > Program.Window.Size.X - Location.Position.X - size.X / 2)
             {
                 curPosition.X = Program.Window.Size.X - Location.Position.X - size.X / 2;

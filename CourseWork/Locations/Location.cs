@@ -8,6 +8,7 @@ namespace CourseWork
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
         protected FloatRect drawingBounds;
+        public FloatRect Bounds { get { return new(Position, new(Width * Tile.TILE_SIZE, Height * Tile.TILE_SIZE * Compression)); } }
         public int Height { get; private set; } = 32;
         public int Width { get; private set; } = 32;
         public static float Compression { get; private set; } = 0.5f;

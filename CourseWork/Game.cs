@@ -31,7 +31,7 @@ namespace CourseWork
             Console.WriteLine($"Camera position: X({-(int)world.Position.X}) Y({-(int)world.Position.Y})      ");
             Console.WriteLine($"Camera X: [{0 - (int)world.Position.X / Tile.TILE_SIZE},{Program.Window.Size.X / Tile.TILE_SIZE + 1 - (int)world.Position.X / Tile.TILE_SIZE}]    ");
             Console.WriteLine($"Camera Y: [{0 - (int)world.Position.Y / Tile.TILE_SIZE},{Program.Window.Size.Y / Tile.TILE_SIZE + 1 - (int)world.Position.Y / Tile.TILE_SIZE}]    ");
-            //Console.WriteLine((int)(1000 / clock.ElapsedTime.AsMilliseconds()) + "fps  ");
+            Console.WriteLine((int)(1000 / clock.ElapsedTime.AsMilliseconds()) + "fps  ");
             //
             clock.Restart();
             
