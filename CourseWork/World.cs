@@ -16,7 +16,7 @@ namespace CourseWork
         private List<Location> locations;
         private RectangleShape darkness;
         public Player Player;
-        private FloatRect bounds { get { return new(Position, new(1200, 1200)); } }
+        private FloatRect bounds { get { return new(Position, new(1624, 1712)); } }
         public float Compression { get; set; } = 0.5f;
         public List<Location> Locations { get { return locations; } }
         public World(int locationsCount)
@@ -33,7 +33,7 @@ namespace CourseWork
             var obj2 = new Stone();
             obj2.Position = new(100, 100);
             locations.Last().AddObject(obj2);
-            Player = new(locations.First());
+            Player = new(locations.First(), bounds);
             Player.Position = locations.First().StartPosition;
             darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TILE_SIZE * 1.1f, Player.VisibilityRadius * 2 * Compression * Tile.TILE_SIZE * 1.1f));
             darkness.Origin = darkness.Size / 2;
@@ -64,6 +64,7 @@ namespace CourseWork
             {
                 curPosition.Y = 0;
             }
+            //TODO
             if (bounds.Width + curPosition.X < 0)
             {
                 curPosition.X = -bounds.Width;
@@ -77,7 +78,6 @@ namespace CourseWork
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
-            Player drawingPlayer = new(Player);
             Player.Position -= Player.Location.Position;
             Player.Location.AddObject(Player);
             foreach (Location location in locations)

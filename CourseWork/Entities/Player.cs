@@ -14,8 +14,9 @@ namespace CourseWork.Entities
         public Vector2f Movement;
         private Vector2f prevPosition;
         public Location Location { get; set; }
+        private FloatRect movementBounds;
         public override FloatRect Bounds { get { return new(new Vector2f(Position.X - Origin.X, Position.Y - size.Z * Location.Compression), new(size.X, size.Z * Location.Compression)); } }
-        public Player(Location location)
+        public Player(Location location, FloatRect movementBounds)
         {
             MovementSpeed = 0.3f;
             VisibilityRadius = 20;
@@ -24,6 +25,7 @@ namespace CourseWork.Entities
             shape.FillColor = Color.Blue;
             Location = location;
             prevPosition = Position;
+            this.movementBounds = movementBounds;
         }
         public Player(Player other)
         {
@@ -60,13 +62,13 @@ namespace CourseWork.Entities
                 curPosition.Y = size.Y;
             }
             //TODO
-            if (curPosition.X > Program.Window.Size.X - Location.Position.X - size.X / 2)
+            if (curPosition.X > movementBounds.Width - size.X / 2)
             {
-                curPosition.X = Program.Window.Size.X - Location.Position.X - size.X / 2;
+                curPosition.X = movementBounds.Width - size.X / 2;
             }
-            if (curPosition.Y > Program.Window.Size.Y - Location.Position.Y)
+            if (curPosition.Y > movementBounds.Height - Location.Position.Y)
             {
-                curPosition.Y = Program.Window.Size.Y - Location.Position.Y;
+                curPosition.Y = movementBounds.Height - Location.Position.Y;
             }
             //
             Position = curPosition;
@@ -75,6 +77,7 @@ namespace CourseWork.Entities
         {
             foreach (var collisionObject in Location.Objects)
             {
+                Position -= Location.Position;
                 if (Intersects(collisionObject))
                 {
                     Vector2f tempPosition = Position;
@@ -88,6 +91,7 @@ namespace CourseWork.Entities
                     }
                     Position = tempPosition;
                 }
+                Position += Location.Position;
             }
             prevPosition = Position;
         }
