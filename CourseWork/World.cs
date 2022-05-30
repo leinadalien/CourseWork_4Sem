@@ -45,37 +45,12 @@ namespace CourseWork
         public World()
         {
             locations = new();
-            //Generate(2);
             GenerateByLeafs();
-            Player = new(locations[1]);
+            Player = new(locations[0]);
             Player.Position = locations.First().StartPosition + locations.First().Position;
             darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TileSize * 1.1f, Player.VisibilityRadius * 2 * Location.Compression * Tile.TileSize * 1.1f));
             darkness.Origin = darkness.Size / 2;
             darkness.Texture = Content.DarknessTexture;
-        }
-        private void Generate(int locationsCount)
-        {
-            for (int i = 0; i < locationsCount; i++)
-            {
-                int index = 0;
-                var location = new Glade();
-
-                if (i == 1)
-                {
-                    location.Position = new(0, Tile.TileSize * 32 * Location.Compression);
-                } //TO REMAKE
-                while (index < locations.Count && location.CompareTo(locations[index]) >= 1)
-                {
-                    index++;
-                }
-                locations.Insert(index, location);
-                //UpdateSize(location);
-            }
-            Door door = new(new(new Vector2f(512, Tile.TileSize * 32 * Location.Compression), new(200, 64)));
-            foreach (Location location in locations)
-            {
-                location.Doors.Add(door);
-            }
         }
         private void GenerateByLeafs()
         {
@@ -91,7 +66,7 @@ namespace CourseWork
                     index++;
                 }
                 locations.Insert(index, location);
-                //UpdateSize(location);
+                UpdateSize(location);
             }
         }
         public void Update(int deltatime)
