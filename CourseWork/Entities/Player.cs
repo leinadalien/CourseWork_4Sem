@@ -17,9 +17,8 @@ namespace CourseWork.Entities
         public override FloatRect Bounds { get { return new(new Vector2f(Position.X - Origin.X, Position.Y - size.Z * Location.Compression), new(size.X, size.Z * Location.Compression)); } }
         public Player(Location location)
         {
-            MovementSpeed = 0.3f;
+            MovementSpeed = 0.7f;
             VisibilityRadius = 20;
-            size = new(32, 64, 32);
             Origin = new(size.X / 2, size.Y);
             shape.FillColor = Color.Blue;
             Location = location;
@@ -47,13 +46,13 @@ namespace CourseWork.Entities
             {
                 localPosition.Y = Bounds.Height;
             }
-            if (localPosition.X > Location.Width * Tile.TILE_SIZE - Origin.X)
+            if (localPosition.X > Location.Width - Origin.X)
             {
-                localPosition.X = Location.Width * Tile.TILE_SIZE - Origin.X;
+                localPosition.X = Location.Width - Origin.X;
             }
-            if (localPosition.Y > Location.Height * Tile.TILE_SIZE * Location.Compression)
+            if (localPosition.Y > Location.Thickness)
             {
-                localPosition.Y = Location.Height * Tile.TILE_SIZE * Location.Compression;
+                localPosition.Y = Location.Thickness;
             }
             bool isInDoor = false;
             foreach (var door in Location.Doors)
@@ -68,6 +67,7 @@ namespace CourseWork.Entities
             {
                 Position = localPosition + Location.Position;
             }
+            
         }
         private void UpdateCollision()
         {

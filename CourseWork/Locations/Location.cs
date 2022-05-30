@@ -4,43 +4,32 @@ using SFML.System;
 
 namespace CourseWork
 {
-    public abstract class Location : Transformable, Drawable
+    public abstract class Location : Object
     {
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
         protected FloatRect drawingBounds;
-        public FloatRect Bounds { get { return new(Position, new(Width * Tile.TILE_SIZE, Height * Tile.TILE_SIZE * Compression)); } }
-        public int Height { get; private set; } = 32;//TOFIX
-        public int Width { get; private set; } = 32;
-        public static float Compression { get; private set; } = 0.5f;
+        public override FloatRect Bounds { get { return new(Position, new(TileCount.X * Tile.TileSize, TileCount.Y * Tile.TileSize * Compression)); } }
+        public Vector2i TileCount { get; protected set; } = new(32, 32);
+        public static float Compression { get; set; } = 0.5f;
         public List<Door> Doors { get;}
-        protected Random random;
         protected Tile[][] tiles;
         public List<Object> Objects { get;}
         public Vector2f StartPosition { get; set; }
 
         public Location()
         {
-            random = new();
-            tiles = new Tile[Height][];
-            for (int i = 0; i < Height; i++)
-            {
-                tiles[i] = new Tile[Width];
-                for (int j = 0; j < Width; j++)
-                {
-                    tiles[i][j] = new(TileType.GROUND, random.Next(8));
-                    tiles[i][j].Position = new Vector2f(j * Tile.TILE_SIZE, i * Tile.TILE_SIZE * Compression);
-                }
-            }
-            StartPosition = new Vector2f(15 * Tile.TILE_SIZE, 15 * Tile.TILE_SIZE * Compression);
             Objects = new();
             Doors = new();
-            
+            var obj = new Stone
+            {
+                Position = new(3 * Tile.TileSize, 3 * Tile.TileSize * Compression)
+            };
+            AddObject(obj);
         }
         public void AddObject(Object obj)
         {
             int index = 0;
-
             while (index < Objects.Count && obj.CompareTo(Objects[index]) >= 1)
             {
                 index++;
@@ -53,18 +42,18 @@ namespace CourseWork
         }
         public virtual void UpdateDrawableObjects(Entity entity)
         {
-            firstDrawingPoint = (entity.Position - new Vector2f(entity.VisibilityRadius * Tile.TILE_SIZE, entity.VisibilityRadius * Tile.TILE_SIZE * Compression)) - Position;
-            lastDrawingPoint = (entity.Position + new Vector2f((entity.VisibilityRadius + 1) * Tile.TILE_SIZE, (entity.VisibilityRadius + 1) * Tile.TILE_SIZE * Compression)) - Position;
+            firstDrawingPoint = (entity.Position - new Vector2f(entity.VisibilityRadius * Tile.TileSize, entity.VisibilityRadius * Tile.TileSize * Compression)) - Position;
+            lastDrawingPoint = (entity.Position + new Vector2f((entity.VisibilityRadius + 1) * Tile.TileSize, (entity.VisibilityRadius + 1) * Tile.TileSize * Compression)) - Position;
             drawingBounds = new(firstDrawingPoint, new(lastDrawingPoint.X - firstDrawingPoint.X, lastDrawingPoint.Y - firstDrawingPoint.Y));
         }
-        public void Draw(RenderTarget target, RenderStates states)
+        public override void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
-            for (int i = (int)(firstDrawingPoint.Y / Tile.TILE_SIZE / Compression); i < (int)(lastDrawingPoint.Y / Tile.TILE_SIZE / Compression); i++)
+            for (int i = (int)(firstDrawingPoint.Y / Tile.TileSize / Compression); i < (int)(lastDrawingPoint.Y / Tile.TileSize / Compression); i++)
             {
-                for (int j = (int)firstDrawingPoint.X / Tile.TILE_SIZE; j < (int)lastDrawingPoint.X / Tile.TILE_SIZE; j++)
+                for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j < (int)lastDrawingPoint.X / Tile.TileSize; j++)
                 {
-                    if (i < 0 || j < 0 || i >= Height || j >= Width || tiles[i][j] == null) continue;
+                    if (i < 0 || j < 0 || i >= TileCount.Y || j >= TileCount.X || tiles[i][j] == null) continue;
                     target.Draw(tiles[i][j], states);
                 }
             }

@@ -7,10 +7,10 @@ namespace CourseWork
     public abstract class Entity : Object
     {
         public int VisibilityRadius { get; set; } = 10;
-        public FloatRect GlobalBounds { get { return shape.GetGlobalBounds(); } }
         protected Entity()
         {
-            shape = new(new Vector2f(32, 64));
+            shape.Size = new(32, 64);
+            size = new(shape.Size.X, shape.Size.Y, 32);
         }
     }
 }

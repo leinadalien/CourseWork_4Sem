@@ -12,7 +12,7 @@ namespace CourseWork
     public abstract class Object : Transformable, Drawable, IComparable<Object>
     {
         protected RectangleShape shape;
-        protected Vector3f size = new(32, 32, 32);
+        protected Vector3f size;
         public float Thickness { get { return size.Z; } set { size.Z = value; } }
         public float Width { get { return size.X; } set { size.X = value; } }
         public float Height { get { return size.Y; } set { size.Y = value; } }
@@ -20,6 +20,7 @@ namespace CourseWork
         protected Object()
         {
             shape = new(new Vector2f(32,32));
+            size = new(shape.Size.X, shape.Size.Y, 32);
         }
         public virtual void Draw(RenderTarget target, RenderStates states)
         {

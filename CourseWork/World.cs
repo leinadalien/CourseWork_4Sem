@@ -16,36 +16,83 @@ namespace CourseWork
         private List<Location> locations;
         private RectangleShape darkness;
         public Player Player;
-        private FloatRect bounds { get { return new(Position, new(1624, 1112)); } }//TODO
+        private Vector2f topLeftPoint = new(0,0);
+        private Vector2i mapSize = new(192,192);
+        private Vector2f size = new(192 * 32, 192 * 16);
         public List<Location> Locations { get { return locations; } }
-        public World(int locationsCount)
+        private void UpdateSize(Location location)
+        {
+            Vector2f deltaPosition = new(0, 0);
+            if (location.Position.X < topLeftPoint.X)
+            {
+                topLeftPoint.X = -location.Position.X;
+                size.X += deltaPosition.X;
+            }
+            if (location.Position.Y < topLeftPoint.Y)
+            {
+                topLeftPoint.Y = -location.Position.Y;
+                size.Y += deltaPosition.Y;
+            }
+            if (location.Position.X + location.Width > Position.X + size.X)
+            {
+                size.X = location.Position.X + location.Width - Position.X;
+            }
+            if (location.Position.Y + location.Thickness > Position.Y + size.Y)
+            {
+                size.Y = location.Position.Y + location.Thickness - Position.Y;
+            }
+        }
+        public World()
         {
             locations = new();
-            for(int i = 0; i < locationsCount; i++)
+            //Generate(2);
+            GenerateByLeafs();
+            Player = new(locations[1]);
+            Player.Position = locations.First().StartPosition + locations.First().Position;
+            darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TileSize * 1.1f, Player.VisibilityRadius * 2 * Location.Compression * Tile.TileSize * 1.1f));
+            darkness.Origin = darkness.Size / 2;
+            darkness.Texture = Content.DarknessTexture;
+        }
+        private void Generate(int locationsCount)
+        {
+            for (int i = 0; i < locationsCount; i++)
             {
-                locations.Add(new Glade());
+                int index = 0;
+                var location = new Glade();
+
+                if (i == 1)
+                {
+                    location.Position = new(0, Tile.TileSize * 32 * Location.Compression);
+                } //TO REMAKE
+                while (index < locations.Count && location.CompareTo(locations[index]) >= 1)
+                {
+                    index++;
+                }
+                locations.Insert(index, location);
+                //UpdateSize(location);
             }
-            locations.Last().Position = new(500, 512);
-
-            var obj = new Stone();
-            obj.Position = new(100,100);
-            locations.First().AddObject(obj);
-            
-            var obj2 = new Stone();
-            obj2.Position = new(100, 100);
-            locations.Last().AddObject(obj2);
-
-            Door door = new(new(new Vector2f(762,512), new(200,64)));
-            foreach(Location location in locations)
+            Door door = new(new(new Vector2f(512, Tile.TileSize * 32 * Location.Compression), new(200, 64)));
+            foreach (Location location in locations)
             {
                 location.Doors.Add(door);
             }
-
-            Player = new(locations.Last());
-            Player.Position = locations.Last().StartPosition + locations.Last().Position;
-            darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TILE_SIZE * 1.1f, Player.VisibilityRadius * 2 * Location.Compression * Tile.TILE_SIZE * 1.1f));
-            darkness.Origin = darkness.Size / 2;
-            darkness.Texture = Content.DarknessTexture;
+        }
+        private void GenerateByLeafs()
+        {
+            Leaf root = new(new(new(0,0), mapSize));
+            root.Split(new Random());
+            List<IntRect> locationsBounds = root.GetRooms();
+            foreach (IntRect locationBounds in locationsBounds)
+            {
+                int index = 0;
+                var location = new Glade(locationBounds);
+                while (index < locations.Count && location.CompareTo(locations[index]) >= 1)
+                {
+                    index++;
+                }
+                locations.Insert(index, location);
+                //UpdateSize(location);
+            }
         }
         public void Update(int deltatime)
         {
@@ -64,21 +111,21 @@ namespace CourseWork
         public void UpdatePosition()
         {
             Vector2f curPosition = new(Program.Window.Size.X / 2 - Player.Position.X, Program.Window.Size.Y / 2 - Player.Position.Y);
-            if (curPosition.X > 0)
+            if (curPosition.X > topLeftPoint.X)
             {
-                curPosition.X = 0;
+                curPosition.X = topLeftPoint.X;
             }
-            if (curPosition.Y > 0)
+            if (curPosition.Y > topLeftPoint.Y)
             {
-                curPosition.Y = 0;
+                curPosition.Y = topLeftPoint.Y;
             }
-            if (curPosition.X < Program.Window.Size.X - bounds.Width)
+            if (curPosition.X < Program.Window.Size.X - size.X)
             {
-                curPosition.X = Program.Window.Size.X - bounds.Width;
+                curPosition.X = Program.Window.Size.X - size.X;
             }
-            if (curPosition.Y < Program.Window.Size.Y - bounds.Height)
+            if (curPosition.Y < Program.Window.Size.Y - size.Y)
             {
-                curPosition.Y = Program.Window.Size.Y - bounds.Height;
+                curPosition.Y = Program.Window.Size.Y - size.Y;
             }
             Position = curPosition;
         }
@@ -91,8 +138,8 @@ namespace CourseWork
             {
                 location.Draw(target, states);
             }
-            Player.Position += Player.Location.Position;
             Player.Location.RemoveObject(Player);
+            Player.Position += Player.Location.Position;
             target.Draw(darkness, states);
         }
     }

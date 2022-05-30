@@ -12,7 +12,7 @@ namespace CourseWork
     public class Tile : Transformable, Drawable
     {
         public TileType type = TileType.GROUND;
-        public const int TILE_SIZE = 32;
+        public static int TileSize = 32;
         RectangleShape shape;
         public Tile() : this(TileType.GROUND, 0)
         {
@@ -21,7 +21,7 @@ namespace CourseWork
         public Tile(TileType type, int id)
         {
             
-            shape = new(new Vector2f(TILE_SIZE, TILE_SIZE));
+            shape = new(new Vector2f(TileSize, TileSize));
             switch (type)
             {
                 case TileType.GROUND:
