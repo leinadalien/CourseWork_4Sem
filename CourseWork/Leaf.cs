@@ -22,7 +22,14 @@ namespace CourseWork
         }
         public void Split(Random random)
         {
-            if (LeftChild != null || RightChild != null)
+
+            if (LeftChild == null && RightChild == null)
+            {
+                Vector2i roomSize = new(random.Next(16, Bounds.Width - 3), random.Next(16, Bounds.Height - 3));
+                Vector2i roomLocalPosition = new(random.Next(1, Bounds.Width - roomSize.X - 1), random.Next(1, Bounds.Height - roomSize.Y - 1));
+                RoomBounds = new(roomLocalPosition.X + Bounds.Left, roomLocalPosition.Y + Bounds.Top, roomSize.X, roomSize.Y);
+            }
+            else
             {
                 return;
             }
@@ -38,9 +45,7 @@ namespace CourseWork
             int maxLeafSize = (horisontalSplit ? Bounds.Height : Bounds.Width) - MIN_LEAF_SIZE;
             if (maxLeafSize < MIN_LEAF_SIZE)
             {
-                Vector2i roomSize = new(random.Next(16, Bounds.Width - 3), random.Next(16, Bounds.Height - 3));
-                Vector2i roomLocalPosition = new(random.Next(1, Bounds.Width - roomSize.X - 1), random.Next(1, Bounds.Height - roomSize.Y - 1));
-                RoomBounds = new(roomLocalPosition.X + Bounds.Left, roomLocalPosition.Y + Bounds.Top, roomSize.X, roomSize.Y);
+                
                 return;
             }
             int leftLeafSize = random.Next(MIN_LEAF_SIZE, maxLeafSize);
@@ -68,16 +73,22 @@ namespace CourseWork
             List<IntRect> result = new();
             if (LeftChild != null)
             {
+
+                Console.Write("Go left ");
                 result.AddRange(LeftChild.GetRooms());
             }
             if (RightChild != null)
             {
+                Console.Write("Go right ");
                 result.AddRange(RightChild.GetRooms());
             }
             if (LeftChild == null && RightChild == null)
             {
+
+                Console.Write($"add result: {RoomBounds} ");
                 result.Add(RoomBounds);
             }
+            Console.WriteLine("Go back");
             return result;
         }
     }

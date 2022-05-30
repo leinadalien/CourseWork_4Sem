@@ -24,7 +24,7 @@ namespace CourseWork
         }
         public void Update()
         {
-            world.Update(clock.ElapsedTime.AsMilliseconds());
+            world.Update(clock.ElapsedTime.AsMilliseconds());/*
             //Game stats
             Console.SetCursorPosition(0, 0);
             Console.WriteLine($"Player position: X({(int)world.Player.Position.X}) Y({(int)world.Player.Position.Y}) [{(int)world.Player.Position.X / Tile.TileSize}][{(int)world.Player.Position.Y / Tile.TileSize}]          ");
@@ -32,7 +32,7 @@ namespace CourseWork
             Console.WriteLine($"Camera X: [{0 - (int)world.Position.X / Tile.TileSize},{Program.Window.Size.X / Tile.TileSize + 1 - (int)world.Position.X / Tile.TileSize}]    ");
             Console.WriteLine($"Camera Y: [{0 - (int)world.Position.Y / Tile.TileSize},{Program.Window.Size.Y / Tile.TileSize + 1 - (int)world.Position.Y / Tile.TileSize}]    ");
            // Console.WriteLine((int)(1000 / clock.ElapsedTime.AsMilliseconds()) + "fps  ");
-            //
+            //*/
             clock.Restart();
             
         }

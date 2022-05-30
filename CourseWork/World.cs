@@ -46,7 +46,7 @@ namespace CourseWork
         {
             locations = new();
             GenerateByLeafs();
-            Player = new(locations[0]);
+            Player = new(locations[1]);
             Player.Position = locations.First().StartPosition + locations.First().Position;
             darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TileSize * 1.1f, Player.VisibilityRadius * 2 * Location.Compression * Tile.TileSize * 1.1f));
             darkness.Origin = darkness.Size / 2;
