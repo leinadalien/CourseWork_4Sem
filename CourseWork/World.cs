@@ -16,9 +16,9 @@ namespace CourseWork
         private List<Location> locations;
         private RectangleShape darkness;
         public Player Player;
-        private Vector2f topLeftPoint = new(0,0);
-        private Vector2i mapSize = new(192,192);
-        private Vector2f size = new(192 * 32, 192 * 16);
+        private Vector2f topLeftPoint = new(0, 0);
+        private Vector2i mapSize = new(192, 192);//192
+        private Vector2f size = new(192 * Tile.TileSize, 192 * Tile.TileSize * Location.Compression);
         public List<Location> Locations { get { return locations; } }
         private void UpdateSize(Location location)
         {
@@ -46,7 +46,7 @@ namespace CourseWork
         {
             locations = new();
             GenerateByLeafs();
-            Player = new(locations[1]);
+            Player = new(locations.First());
             Player.Position = locations.First().StartPosition + locations.First().Position;
             darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TileSize * 1.1f, Player.VisibilityRadius * 2 * Location.Compression * Tile.TileSize * 1.1f));
             darkness.Origin = darkness.Size / 2;

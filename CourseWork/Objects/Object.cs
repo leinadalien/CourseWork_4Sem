@@ -19,8 +19,8 @@ namespace CourseWork
         public abstract FloatRect Bounds { get; }
         protected Object()
         {
-            shape = new(new Vector2f(32,32));
-            size = new(shape.Size.X, shape.Size.Y, 32);
+            shape = new(new Vector2f(Tile.TileSize,Tile.TileSize));
+            size = new(shape.Size.X, shape.Size.Y, Tile.TileSize);
         }
         public virtual void Draw(RenderTarget target, RenderStates states)
         {

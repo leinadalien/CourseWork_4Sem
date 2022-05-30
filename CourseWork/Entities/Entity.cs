@@ -9,8 +9,8 @@ namespace CourseWork
         public int VisibilityRadius { get; set; } = 10;
         protected Entity()
         {
-            shape.Size = new(32, 64);
-            size = new(shape.Size.X, shape.Size.Y, 32);
+            shape.Size = new(Tile.TileSize, Tile.TileSize * 2);
+            size = new(shape.Size.X, shape.Size.Y, Tile.TileSize);
         }
     }
 }

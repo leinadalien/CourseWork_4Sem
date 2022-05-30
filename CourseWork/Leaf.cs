@@ -23,16 +23,7 @@ namespace CourseWork
         public void Split(Random random)
         {
 
-            if (LeftChild == null && RightChild == null)
-            {
-                Vector2i roomSize = new(random.Next(16, Bounds.Width - 3), random.Next(16, Bounds.Height - 3));
-                Vector2i roomLocalPosition = new(random.Next(1, Bounds.Width - roomSize.X - 1), random.Next(1, Bounds.Height - roomSize.Y - 1));
-                RoomBounds = new(roomLocalPosition.X + Bounds.Left, roomLocalPosition.Y + Bounds.Top, roomSize.X, roomSize.Y);
-            }
-            else
-            {
-                return;
-            }
+
             bool horisontalSplit = random.NextDouble() >= 0.5;
             if (Bounds.Width * 1.0f / Bounds.Height >= 1.25)
             {
@@ -45,7 +36,7 @@ namespace CourseWork
             int maxLeafSize = (horisontalSplit ? Bounds.Height : Bounds.Width) - MIN_LEAF_SIZE;
             if (maxLeafSize < MIN_LEAF_SIZE)
             {
-                
+
                 return;
             }
             int leftLeafSize = random.Next(MIN_LEAF_SIZE, maxLeafSize);
@@ -59,13 +50,20 @@ namespace CourseWork
                 LeftChild = new(new(Bounds.Left, Bounds.Top, leftLeafSize, Bounds.Height));
                 RightChild = new(new(Bounds.Left + leftLeafSize, Bounds.Top, Bounds.Width - leftLeafSize, Bounds.Height));
             }
-            if (LeftChild.Bounds.Width > MAX_LEAF_SIZE || LeftChild.Bounds.Height > MAX_LEAF_SIZE || random.NextDouble() >= 0.25)
+            Leaf temp = LeftChild;
+            for (int i = 0; i < 2; i++)
             {
-                LeftChild.Split(random);
-            }
-            if (RightChild.Bounds.Width > MAX_LEAF_SIZE || RightChild.Bounds.Height > MAX_LEAF_SIZE || random.NextDouble() >= 0.25)
-            {
-                RightChild.Split(random);
+                if (temp.Bounds.Width > MAX_LEAF_SIZE || temp.Bounds.Height > MAX_LEAF_SIZE || random.NextDouble() >= 0.25)
+                {
+                    temp.Split(random);
+                }
+                if (temp.LeftChild == null && temp.RightChild == null)
+                {
+                    Vector2i roomSize = new(random.Next(16, temp.Bounds.Width - 3), random.Next(16, temp.Bounds.Height - 3));
+                    Vector2i roomLocalPosition = new(random.Next(1, temp.Bounds.Width - roomSize.X - 1), random.Next(1, temp.Bounds.Height - roomSize.Y - 1));
+                    temp.RoomBounds = new(roomLocalPosition.X + temp.Bounds.Left, roomLocalPosition.Y + temp.Bounds.Top, roomSize.X, roomSize.Y);
+                }
+                temp = RightChild;
             }
         }
         public List<IntRect> GetRooms()
@@ -73,22 +71,16 @@ namespace CourseWork
             List<IntRect> result = new();
             if (LeftChild != null)
             {
-
-                Console.Write("Go left ");
                 result.AddRange(LeftChild.GetRooms());
             }
             if (RightChild != null)
             {
-                Console.Write("Go right ");
                 result.AddRange(RightChild.GetRooms());
             }
             if (LeftChild == null && RightChild == null)
             {
-
-                Console.Write($"add result: {RoomBounds} ");
                 result.Add(RoomBounds);
             }
-            Console.WriteLine("Go back");
             return result;
         }
     }
