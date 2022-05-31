@@ -9,11 +9,13 @@ namespace CourseWork
         GROUND,
         TRAIL
     }
-    public class Tile : Transformable, Drawable
+    public class Tile : Object
     {
         public TileType type = TileType.GROUND;
         public static int TileSize = 32;
-        RectangleShape shape;
+
+        public override FloatRect Bounds => throw new NotImplementedException();
+
         public Tile() : this(TileType.GROUND, 0)
         {
             

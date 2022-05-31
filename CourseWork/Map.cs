@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace CourseWork
 {
-    public class Leaf
+    public class Map
     {
         private const int MIN_LEAF_SIZE = 36;
         private const int MAX_LEAF_SIZE = 52;
         public IntRect Bounds { get; private set; }
-        public Leaf? LeftChild { get; private set; }
-        public Leaf? RightChild { get; private set; }
+        public Map? LeftChild { get; private set; }
+        public Map? RightChild { get; private set; }
         public IntRect RoomBounds { get; private set; }
-        public Leaf(IntRect bounds)
+        public Map(IntRect bounds)
         {
             Bounds = bounds;
         }
@@ -50,7 +50,7 @@ namespace CourseWork
                 LeftChild = new(new(Bounds.Left, Bounds.Top, leftLeafSize, Bounds.Height));
                 RightChild = new(new(Bounds.Left + leftLeafSize, Bounds.Top, Bounds.Width - leftLeafSize, Bounds.Height));
             }
-            Leaf temp = LeftChild;
+            Map temp = LeftChild;
             for (int i = 0; i < 2; i++)
             {
                 if (temp.Bounds.Width > MAX_LEAF_SIZE || temp.Bounds.Height > MAX_LEAF_SIZE || random.NextDouble() >= 0.25)
@@ -82,6 +82,94 @@ namespace CourseWork
                 result.Add(RoomBounds);
             }
             return result;
-        }
+        } 
+        public List<IntRect> CreateTransition(IntRect start, IntRect end, Random random)
+        {
+			List<IntRect> result = new();
+
+			Vector2i startPoint = new(start.Left + random.Next(1, start.Width - 2),start.Top + random.Next(1, start.Height - 2));
+			Vector2i endPoint = new(end.Left + random.Next(1, end.Width - 2), end.Top + random.Next(1, end.Height - 2));
+			int width = endPoint.X - startPoint.X;
+			var height = endPoint.Y - startPoint.Y;
+
+			if (width < 0)
+			{
+				if (height < 0)
+				{
+					if (random.NextDouble() < 0.5)
+					{
+						result.Add(new IntRect(endPoint.X, startPoint.Y, -width, 1));
+						result.Add(new IntRect(endPoint.X, endPoint.Y, 1, -height));
+					}
+					else
+					{
+						result.Add(new IntRect(endPoint.X, endPoint.Y, -width, 1));
+						result.Add(new IntRect(startPoint.X, endPoint.Y, 1, -height));
+					}
+				}
+				else if (height > 0)
+				{
+					if (random.NextDouble() < 0.5)
+					{
+						result.Add(new IntRect(endPoint.X, startPoint.Y, -width, 1));
+						result.Add(new IntRect(endPoint.X, startPoint.Y, 1, height));
+					}
+					else
+					{
+						result.Add(new IntRect(endPoint.X, endPoint.Y, width, 1));
+						result.Add(new IntRect(startPoint.X, startPoint.Y, 1, height));
+					}
+				}
+				else // если (h == 0)
+				{
+					result.Add(new IntRect(endPoint.X, endPoint.Y, -width, 1));
+				}
+			}
+			else if (width > 0)
+			{
+				if (height < 0)
+				{
+					if (random.NextDouble() < 0.5)
+					{
+						result.Add(new IntRect(startPoint.X, endPoint.Y, width, 1));
+						result.Add(new IntRect(startPoint.X, endPoint.Y, 1, -height));
+					}
+					else
+					{
+						result.Add(new IntRect(startPoint.X, startPoint.Y, width, 1));
+						result.Add(new IntRect(endPoint.Y, endPoint.Y, 1, -height));
+					}
+				}
+				else if (height > 0)
+				{
+					if (random.NextDouble() < 0.5)
+					{
+						result.Add(new IntRect(startPoint.Y, startPoint.Y, width, 1));
+						result.Add(new IntRect(endPoint.X, startPoint.Y, 1, height));
+					}
+					else
+					{
+						result.Add(new IntRect(startPoint.X, endPoint.Y, width, 1));
+						result.Add(new IntRect(startPoint.X, startPoint.Y, 1, height));
+					}
+				}
+				else // если (h == 0)
+				{
+					result.Add(new IntRect(startPoint.X, startPoint.Y, width, 1));
+				}
+			}
+			else // если (w == 0)
+			{
+				if (height < 0)
+				{
+					result.Add(new IntRect(endPoint.X, endPoint.X, 1, -height));
+				}
+				else if (height > 0)
+				{
+					result.Add(new IntRect(startPoint.X, startPoint.Y, 1, height));
+				}
+			}
+			return result;
+		}
     }
 }

@@ -16,6 +16,8 @@ namespace CourseWork
         private List<Location> locations;
         private RectangleShape darkness;
         public Player Player;
+
+        private Tile[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i mapSize = new(192, 192);//192
         private Vector2f size = new(192 * Tile.TileSize, 192 * Tile.TileSize * Location.Compression);
@@ -45,6 +47,7 @@ namespace CourseWork
         public World()
         {
             locations = new();
+            tiles = new Tile[mapSize.X, mapSize.Y];
             GenerateByLeafs();
             Player = new(locations.First());
             Player.Position = locations.First().StartPosition + locations.First().Position;
@@ -54,9 +57,10 @@ namespace CourseWork
         }
         private void GenerateByLeafs()
         {
-            Leaf root = new(new(new(0,0), mapSize));
+            Map root = new(new(new(0,0), mapSize));
             root.Split(new Random());
             List<IntRect> locationsBounds = root.GetRooms();
+            locationsBounds.AddRange(root.CreateTransition(locationsBounds[0], locationsBounds[1], new Random()));
             foreach (IntRect locationBounds in locationsBounds)
             {
                 int index = 0;
