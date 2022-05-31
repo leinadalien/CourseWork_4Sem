@@ -1,4 +1,5 @@
 ﻿using CourseWork.Flyweights;
+using CourseWork.Locations;
 using CourseWork.Objects;
 using SFML.Graphics;
 using SFML.System;
@@ -15,7 +16,9 @@ namespace CourseWork
         public IntRect IntBounds { get; protected set; }
         public Vector2i TileCount { get; protected set; } = new(32, 32);
         public static float Compression { get; set; } = 0.5f;
-        public List<Door> Doors { get; }
+        protected List<Location> connectedLocations;
+        
+        public List<Location> ConnectedLocations { get { return connectedLocations; } }
         protected TileState[,] tiles;
         public List<Object> Objects { get; }
         public Vector2f StartPosition { get; set; }
@@ -23,12 +26,24 @@ namespace CourseWork
         public Location()
         {
             Objects = new();
-            Doors = new();
-            var obj = new Stone
+            connectedLocations = new();
+            
+        }
+        public TileState[,] GenerateTiles(Random random)
+        {
+            tiles = new TileState[TileCount.Y, TileCount.X];
+            for (int i = 0; i < TileCount.Y; i++)
             {
-                Position = new(3 * Tile.TileSize, 3 * Tile.TileSize * Compression)
-            };
-            AddObject(obj);
+                for (int j = 0; j < TileCount.X; j++)
+                {
+                    tiles[i, j] = new() { Type = TileType.GROUND, Id = (byte)random.Next(8) };
+                }
+            }
+            return tiles;
+        }
+        public void ConnectLocation(Location location)
+        {
+            connectedLocations.Add(location);
         }
         public void AddObject(Object obj)
         {
@@ -62,14 +77,6 @@ namespace CourseWork
                     tileFlyweight.Draw(new(j * Tile.TileSize, i * Tile.TileSize * Compression), target, states);
                 }
             }
-            //DOORS
-            foreach (var door in Doors)
-            {
-                door.Position -= Position;
-                target.Draw(door, states);
-                door.Position += Position;
-            }
-            //
             foreach (var drawableObject in Objects)
             {
                 if (drawingBounds.Intersects(drawableObject.Bounds))

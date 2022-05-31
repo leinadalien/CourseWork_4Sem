@@ -1,5 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
+using CourseWork.Locations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace CourseWork.Entities
         public Player(Location location)
         {
             MovementSpeed = 0.7f;
-            VisibilityRadius = 200;//20
+            VisibilityRadius = 20;//20
             Origin = new(size.X / 2, size.Y);
             shape.FillColor = Color.Blue;
             Location = location;
@@ -34,10 +35,9 @@ namespace CourseWork.Entities
             UpdateMove(deltaTime);
             UpdateCollision();
         }
-        private void UpdateMove(int deltaTime)
+        private Vector2f CheckBoundsFor(Location location)
         {
-            Position += new Vector2f(Movement.X * deltaTime, Movement.Y * deltaTime * Location.Compression);
-            Vector2f localPosition = Position - Location.Position;
+            Vector2f localPosition = Position - location.Position;
             if (localPosition.X < Origin.X)
             {
                 localPosition.X = Origin.X;
@@ -46,27 +46,38 @@ namespace CourseWork.Entities
             {
                 localPosition.Y = Bounds.Height;
             }
-            if (localPosition.X > Location.Width - Origin.X)
+            if (localPosition.X > location.Width - Origin.X)
             {
-                localPosition.X = Location.Width - Origin.X;
+                localPosition.X = location.Width - Origin.X;
             }
-            if (localPosition.Y > Location.Thickness)
+            if (localPosition.Y > location.Thickness)
             {
-                localPosition.Y = Location.Thickness;
+                localPosition.Y = location.Thickness;
             }
-            bool isInDoor = false;
-            foreach (var door in Location.Doors)
+            return localPosition + location.Position;
+        }
+        private void UpdateMove(int deltaTime)
+        {
+            Position += new Vector2f(Movement.X * deltaTime, Movement.Y * deltaTime * Location.Compression);
+            Vector2f positionInBounds = CheckBoundsFor(Location); 
+            if (positionInBounds != Position)
             {
-                if (door.Bounds.Contains(Bounds.Left, Bounds.Top) && door.Bounds.Contains(Bounds.Left + Bounds.Width, Bounds.Top + Bounds.Height))
+                bool isInTransition = false;
+                foreach(Location location in Location.ConnectedLocations)
                 {
-                    isInDoor = true;
-                    break;
+                    if (CheckBoundsFor(location) == Position)
+                    {
+                        isInTransition = true;
+                        Location = location;
+                        break;
+                    }
+                }
+                if (!isInTransition)
+                {
+                    Position = positionInBounds;
                 }
             }
-            if (!isInDoor)
-            {
-                Position = localPosition + Location.Position;
-            }
+            
             
         }
         private void UpdateCollision()

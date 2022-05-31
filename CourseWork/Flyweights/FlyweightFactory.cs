@@ -27,12 +27,5 @@ namespace CourseWork.Flyweights
             }
             return flyweights.First(x => x.Key == key).Value;
         }
-        public void PrintFlyweights()//NEED FOR DEBUG
-        {
-            foreach (var flyweight in flyweights)
-            {
-                Console.WriteLine(flyweight.GetHashCode());
-            }
-        }
     }
 }

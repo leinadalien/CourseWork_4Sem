@@ -24,23 +24,23 @@ namespace CourseWork
         {
 
 
-            bool horisontalSplit = random.NextDouble() >= 0.5;
+            bool horizontalSplit = random.NextDouble() >= 0.5;
             if (Bounds.Width * 1.0f / Bounds.Height >= 1.25)
             {
-                horisontalSplit = false;
+                horizontalSplit = false;
             }
             else if (Bounds.Height * 1.0f / Bounds.Width >= 1.25)
             {
-                horisontalSplit = true;
+                horizontalSplit = true;
             }
-            int maxLeafSize = (horisontalSplit ? Bounds.Height : Bounds.Width) - MIN_LEAF_SIZE;
+            int maxLeafSize = (horizontalSplit ? Bounds.Height : Bounds.Width) - MIN_LEAF_SIZE;
             if (maxLeafSize < MIN_LEAF_SIZE)
             {
 
                 return;
             }
             int leftLeafSize = random.Next(MIN_LEAF_SIZE, maxLeafSize);
-            if (horisontalSplit)
+            if (horizontalSplit)
             {
                 LeftChild = new(new(Bounds.Left, Bounds.Top, Bounds.Width, leftLeafSize));
                 RightChild = new(new(Bounds.Left, Bounds.Top + leftLeafSize, Bounds.Width, Bounds.Height - leftLeafSize));
@@ -91,6 +91,8 @@ namespace CourseWork
 			Vector2i endPoint = new(end.Left + random.Next(1, end.Width - transitionWidth - 1), end.Top + random.Next(1, end.Height - transitionWidth - 1));
 			int width = endPoint.X - startPoint.X;
 			var height = endPoint.Y - startPoint.Y;
+			IntRect first;
+			IntRect Last;
 
 			if (width < 0)
 			{
@@ -98,13 +100,16 @@ namespace CourseWork
 				{
 					if (random.NextDouble() < 0.5)
 					{
-						result.Add(new IntRect(endPoint.X, startPoint.Y, -width, transitionWidth));
-						result.Add(new IntRect(endPoint.X, endPoint.Y, transitionWidth, -height));
+						first = new(endPoint.X, endPoint.Y, transitionWidth, -height);
+						Last = new(endPoint.X, startPoint.Y, -width + transitionWidth, transitionWidth);
+						result.Add(first);
+						result.Add(Last);
 					}
 					else
 					{
 						result.Add(new IntRect(endPoint.X, endPoint.Y, -width, transitionWidth));
-						result.Add(new IntRect(startPoint.X, endPoint.Y, transitionWidth, -height));
+						result.Add(new IntRect(startPoint.X, endPoint.Y, transitionWidth, -height + transitionWidth));
+
 					}
 				}
 				else if (height > 0)
@@ -116,8 +121,8 @@ namespace CourseWork
 					}
 					else
 					{
-						result.Add(new IntRect(endPoint.X, endPoint.Y, -width, transitionWidth));
-						result.Add(new IntRect(startPoint.X, startPoint.Y, transitionWidth, height));
+						result.Add(new IntRect(endPoint.X, endPoint.Y, -width + transitionWidth, transitionWidth));
+						result.Add(new IntRect(startPoint.X, startPoint.Y, transitionWidth, height + transitionWidth));
 					}
 				}
 				else
@@ -133,24 +138,25 @@ namespace CourseWork
 					{
 						result.Add(new IntRect(startPoint.X, endPoint.Y, width, transitionWidth));
 						result.Add(new IntRect(startPoint.X, endPoint.Y, transitionWidth, -height));
+
 					}
 					else
 					{
-						result.Add(new IntRect(startPoint.X, startPoint.Y, width, transitionWidth));
-						result.Add(new IntRect(endPoint.X, endPoint.Y, transitionWidth, -height));
+						result.Add(new IntRect(startPoint.X, startPoint.Y, width + transitionWidth, transitionWidth));
+						result.Add(new IntRect(endPoint.X, endPoint.Y, transitionWidth, -height + transitionWidth));
 					}
 				}
 				else if (height > 0)
 				{
 					if (random.NextDouble() < 0.5)
 					{
-						result.Add(new IntRect(startPoint.X, startPoint.Y, width, transitionWidth));
+						result.Add(new IntRect(startPoint.X, startPoint.Y, width + transitionWidth, transitionWidth));
 						result.Add(new IntRect(endPoint.X, startPoint.Y, transitionWidth, height));
 					}
 					else
 					{
 						result.Add(new IntRect(startPoint.X, endPoint.Y, width, transitionWidth));
-						result.Add(new IntRect(startPoint.X, startPoint.Y, transitionWidth, height));
+						result.Add(new IntRect(startPoint.X, startPoint.Y, transitionWidth, height + transitionWidth));
 					}
 				}
 				else

@@ -12,6 +12,7 @@ namespace CourseWork.Locations
     {
         public Transition(IntRect bounds)
         {
+            connectedLocations = new();
             IntBounds = bounds;
             shape.FillColor = new(0, 255, 255, 120);
             TileCount = new(bounds.Width, bounds.Height);
@@ -30,10 +31,17 @@ namespace CourseWork.Locations
         }
         public override void Draw(RenderTarget target, RenderStates states)
         {
-            //shape.Position = Position;
-            shape.Size = new(size.X, size.Z);
             states.Transform *= Transform;
-            shape.Draw(target, states);
+            foreach (var drawableObject in Objects)
+            {
+                if (drawingBounds.Intersects(drawableObject.Bounds))
+                {
+                    target.Draw(drawableObject, states);
+                }
+            }
+            
+            //shape.Draw(target, states);
+            
         }
     }
 }

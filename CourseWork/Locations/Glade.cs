@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using CourseWork.Objects;
+using SFML.Graphics;
 using SFML.System;
 using System;
 using System.Collections.Generic;
@@ -12,19 +13,16 @@ namespace CourseWork.Locations
     {
         public Glade(IntRect bounds)
         {
+            var obj = new Stone
+            {
+                Position = new(3 * Tile.TileSize, 3 * Tile.TileSize * Compression)
+            };
+            AddObject(obj);
             IntBounds = bounds;
             TileCount = new(bounds.Width, bounds.Height);
             Position = new(bounds.Left * Tile.TileSize, bounds.Top * Tile.TileSize * Compression);
             size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize * Compression);
             Random random = new();
-            tiles = new TileState[TileCount.Y, TileCount.X];
-            for (int i = 0; i < TileCount.Y; i++)
-            {
-                for (int j = 0; j < TileCount.X; j++)
-                {
-                    tiles[i, j] = new() { Type = TileType.GROUND, Id = (byte)random.Next(8) };
-                }
-            }
             StartPosition = new Vector2f(15 * Tile.TileSize, 15 * Tile.TileSize * Compression);
         }
 

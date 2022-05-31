@@ -61,9 +61,21 @@ namespace CourseWork
             );
             transitions = new();
             locations = new();
-            tiles = new TileState[mapSize.X, mapSize.Y];
             GenerateRooms();
             GenerateTransitions(locations);
+            tiles = new TileState[mapSize.X, mapSize.Y];
+            foreach(Location location in locations)
+            {
+                IntRect bounds = location.IntBounds;
+                TileState[,] locationTiles = location.GenerateTiles(new Random());
+                for(int i = 0; i < bounds.Height; i++)
+                {
+                    for(int j = 0; j < bounds.Width; j++)
+                    {
+                        tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
+                    }
+                }
+            }
             Player = new(locations.First());
             Player.Position = locations.First().StartPosition + locations.First().Position;
             darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TileSize * 1.1f, Player.VisibilityRadius * 2 * Location.Compression * Tile.TileSize * 1.1f));
@@ -94,12 +106,39 @@ namespace CourseWork
         private void GenerateTransitions(List<Location> locations)
         {
             Random random = new();
-            for (int i = 0; i < locations.Count - 1; i++)
+            List<Location> tempLocations = new();
+            
+            foreach (Location firstLocation in locations)
             {
-                List<IntRect> transitionBounds = Map.CreateTransition(locations[i].IntBounds, locations[i + 1].IntBounds, random);
+                foreach (Location tempLocation in locations)
+                {
+                    tempLocations.Add(tempLocation);
+                }
+                tempLocations.Remove(firstLocation);
+                Location secondLocation = tempLocations[random.Next(tempLocations.Count)];
+                List<IntRect> transitionBounds = Map.CreateTransition(firstLocation.IntBounds, secondLocation.IntBounds, random);
                 foreach (IntRect transitionBound in transitionBounds)
                 {
                     transitions.Add(new(transitionBound));
+                }
+            }
+            foreach (Transition transition in transitions)
+            {
+                foreach (Location location in locations)
+                {
+                    if (transition.Intersects(location))
+                    {
+                        transition.ConnectLocation(location);
+                        location.ConnectLocation(transition);
+                    }
+                }
+                foreach (Transition location in transitions)
+                {
+                    if (transition.Intersects(location))
+                    {
+                        transition.ConnectLocation(location);
+                        location.ConnectLocation(transition);
+                    }
                 }
             }
             
@@ -112,10 +151,10 @@ namespace CourseWork
             foreach (Location location in locations)
             {
                 location.UpdateDrawableObjects(Player);
-                if (Player.Bounds.Intersects(location.Bounds) && Player.Location != location)
-                {
-                    Player.Location = location;
-                }
+            }
+            foreach (Transition location in transitions)
+            {
+                location.UpdateDrawableObjects(Player);
             }
         }
         public void UpdatePosition()
@@ -142,21 +181,19 @@ namespace CourseWork
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
-            //TRANSITIONS
-            foreach (Transition transition in transitions)
-            {
-                transition.Draw(target, states);
-            }
-            //
+            
             Player.Position -= Player.Location.Position;
             Player.Location.AddObject(Player);
-            foreach (Location location in locations)
+            List<Location> temp = new();
+            temp.AddRange(locations);
+            temp.AddRange(transitions);
+            foreach (Location location in temp)
             {
                 location.Draw(target, states);
             }
             Player.Location.RemoveObject(Player);
             Player.Position += Player.Location.Position;
-            //target.Draw(darkness, states);
+            target.Draw(darkness, states);
             
         }
     }

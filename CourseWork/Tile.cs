@@ -5,9 +5,9 @@ namespace CourseWork
 {
     public enum TileType : byte
     {
-        NONE,
-        GROUND,
-        TRAIL
+        NONE = 0,
+        GROUND = 1,
+        TRAIL = 2,
     }
     public struct TileState
     {
@@ -17,16 +17,11 @@ namespace CourseWork
     public class Tile : Object
     {
         public TileType Type { get; set; } = TileType.GROUND;
-        public int Id { get; set; }
-        public static int TileSize = 8;//32
+        public int Id { get; set; } = 0;
+        public static int TileSize = 32;//32
 
         public override FloatRect Bounds => throw new NotImplementedException();
 
-        public Tile() : this(TileType.GROUND, 0)
-        {
-            Type = TileType.GROUND;
-            Id = 0;
-        }
         public Tile(TileType type, int id)
         {
             Type = type;
