@@ -83,12 +83,12 @@ namespace CourseWork
             }
             return result;
         } 
-        public List<IntRect> CreateTransition(IntRect start, IntRect end, Random random)
+        public static List<IntRect> CreateTransition(IntRect start, IntRect end, Random random)
         {
 			List<IntRect> result = new();
-
-			Vector2i startPoint = new(start.Left + random.Next(1, start.Width - 2),start.Top + random.Next(1, start.Height - 2));
-			Vector2i endPoint = new(end.Left + random.Next(1, end.Width - 2), end.Top + random.Next(1, end.Height - 2));
+			int transitionWidth = 8;
+			Vector2i startPoint = new(start.Left + random.Next(1, start.Width - transitionWidth - 1),start.Top + random.Next(1, start.Height - transitionWidth - 1));
+			Vector2i endPoint = new(end.Left + random.Next(1, end.Width - transitionWidth - 1), end.Top + random.Next(1, end.Height - transitionWidth - 1));
 			int width = endPoint.X - startPoint.X;
 			var height = endPoint.Y - startPoint.Y;
 
@@ -98,31 +98,31 @@ namespace CourseWork
 				{
 					if (random.NextDouble() < 0.5)
 					{
-						result.Add(new IntRect(endPoint.X, startPoint.Y, -width, 1));
-						result.Add(new IntRect(endPoint.X, endPoint.Y, 1, -height));
+						result.Add(new IntRect(endPoint.X, startPoint.Y, -width, transitionWidth));
+						result.Add(new IntRect(endPoint.X, endPoint.Y, transitionWidth, -height));
 					}
 					else
 					{
-						result.Add(new IntRect(endPoint.X, endPoint.Y, -width, 1));
-						result.Add(new IntRect(startPoint.X, endPoint.Y, 1, -height));
+						result.Add(new IntRect(endPoint.X, endPoint.Y, -width, transitionWidth));
+						result.Add(new IntRect(startPoint.X, endPoint.Y, transitionWidth, -height));
 					}
 				}
 				else if (height > 0)
 				{
 					if (random.NextDouble() < 0.5)
 					{
-						result.Add(new IntRect(endPoint.X, startPoint.Y, -width, 1));
-						result.Add(new IntRect(endPoint.X, startPoint.Y, 1, height));
+						result.Add(new IntRect(endPoint.X, startPoint.Y, -width, transitionWidth));
+						result.Add(new IntRect(endPoint.X, startPoint.Y, transitionWidth, height));
 					}
 					else
 					{
-						result.Add(new IntRect(endPoint.X, endPoint.Y, width, 1));
-						result.Add(new IntRect(startPoint.X, startPoint.Y, 1, height));
+						result.Add(new IntRect(endPoint.X, endPoint.Y, -width, transitionWidth));
+						result.Add(new IntRect(startPoint.X, startPoint.Y, transitionWidth, height));
 					}
 				}
-				else // если (h == 0)
+				else
 				{
-					result.Add(new IntRect(endPoint.X, endPoint.Y, -width, 1));
+					result.Add(new IntRect(endPoint.X, endPoint.Y, -width, transitionWidth));
 				}
 			}
 			else if (width > 0)
@@ -131,42 +131,42 @@ namespace CourseWork
 				{
 					if (random.NextDouble() < 0.5)
 					{
-						result.Add(new IntRect(startPoint.X, endPoint.Y, width, 1));
-						result.Add(new IntRect(startPoint.X, endPoint.Y, 1, -height));
+						result.Add(new IntRect(startPoint.X, endPoint.Y, width, transitionWidth));
+						result.Add(new IntRect(startPoint.X, endPoint.Y, transitionWidth, -height));
 					}
 					else
 					{
-						result.Add(new IntRect(startPoint.X, startPoint.Y, width, 1));
-						result.Add(new IntRect(endPoint.Y, endPoint.Y, 1, -height));
+						result.Add(new IntRect(startPoint.X, startPoint.Y, width, transitionWidth));
+						result.Add(new IntRect(endPoint.X, endPoint.Y, transitionWidth, -height));
 					}
 				}
 				else if (height > 0)
 				{
 					if (random.NextDouble() < 0.5)
 					{
-						result.Add(new IntRect(startPoint.Y, startPoint.Y, width, 1));
-						result.Add(new IntRect(endPoint.X, startPoint.Y, 1, height));
+						result.Add(new IntRect(startPoint.X, startPoint.Y, width, transitionWidth));
+						result.Add(new IntRect(endPoint.X, startPoint.Y, transitionWidth, height));
 					}
 					else
 					{
-						result.Add(new IntRect(startPoint.X, endPoint.Y, width, 1));
-						result.Add(new IntRect(startPoint.X, startPoint.Y, 1, height));
+						result.Add(new IntRect(startPoint.X, endPoint.Y, width, transitionWidth));
+						result.Add(new IntRect(startPoint.X, startPoint.Y, transitionWidth, height));
 					}
 				}
-				else // если (h == 0)
+				else
 				{
-					result.Add(new IntRect(startPoint.X, startPoint.Y, width, 1));
+					result.Add(new IntRect(startPoint.X, startPoint.Y, width, transitionWidth));
 				}
 			}
-			else // если (w == 0)
+			else
 			{
 				if (height < 0)
 				{
-					result.Add(new IntRect(endPoint.X, endPoint.X, 1, -height));
+					result.Add(new IntRect(endPoint.X, endPoint.X, transitionWidth, -height));
 				}
 				else if (height > 0)
 				{
-					result.Add(new IntRect(startPoint.X, startPoint.Y, 1, height));
+					result.Add(new IntRect(startPoint.X, startPoint.Y, transitionWidth, height));
 				}
 			}
 			return result;

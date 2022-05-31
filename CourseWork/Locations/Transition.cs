@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,30 @@ namespace CourseWork.Locations
 {
     public class Transition : Location
     {
-        private Location startLocation;
-        private Location endLocation;
-        public Transition(Location startLocation, Location endLocation)
+        public Transition(IntRect bounds)
         {
-            shape.FillColor = new(0, 255, 255);
-            this.startLocation = startLocation;
-            this.endLocation = endLocation;
+            IntBounds = bounds;
+            shape.FillColor = new(0, 255, 255, 120);
+            TileCount = new(bounds.Width, bounds.Height);
+            Position = new(bounds.Left * Tile.TileSize, bounds.Top * Tile.TileSize * Compression);
+            size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize * Compression);
+            Random random = new();
+            tiles = new TileState[TileCount.Y, TileCount.X];
+            for (int i = 0; i < TileCount.Y; i++)
+            {
+                for (int j = 0; j < TileCount.X; j++)
+                {
+                    tiles[i, j] = new() { Type = TileType.GROUND, Id = (byte)random.Next(8) };
+                }
+            }
+            StartPosition = new Vector2f(15 * Tile.TileSize, 15 * Tile.TileSize * Compression);
+        }
+        public override void Draw(RenderTarget target, RenderStates states)
+        {
+            //shape.Position = Position;
+            shape.Size = new(size.X, size.Z);
+            states.Transform *= Transform;
+            shape.Draw(target, states);
         }
     }
 }

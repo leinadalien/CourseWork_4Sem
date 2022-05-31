@@ -18,7 +18,7 @@ namespace CourseWork
     {
         public TileType Type { get; set; } = TileType.GROUND;
         public int Id { get; set; }
-        public static int TileSize = 32;
+        public static int TileSize = 8;//32
 
         public override FloatRect Bounds => throw new NotImplementedException();
 

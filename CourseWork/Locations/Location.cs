@@ -12,6 +12,7 @@ namespace CourseWork
         protected FloatRect drawingBounds;
         public FlyweightFactory FlyweightFactory { get; set; } = new();
         public override FloatRect Bounds { get { return new(Position, new(TileCount.X * Tile.TileSize, TileCount.Y * Tile.TileSize * Compression)); } }
+        public IntRect IntBounds { get; protected set; }
         public Vector2i TileCount { get; protected set; } = new(32, 32);
         public static float Compression { get; set; } = 0.5f;
         public List<Door> Doors { get; }
@@ -56,9 +57,9 @@ namespace CourseWork
             {
                 for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j < (int)lastDrawingPoint.X / Tile.TileSize; j++)
                 {
-                    if (i < 0 || j < 0 || i >= TileCount.Y || j >= TileCount.X/* || tiles[i, j] == null*/) continue;
+                    if (i < 0 || j < 0 || i >= TileCount.Y || j >= TileCount.X) continue;
                     tileFlyweight = FlyweightFactory.GetFlyweight(new Tile(tiles[i, j].Type, tiles[i, j].Id));
-                    tileFlyweight.Draw(new(j * Tile.TileSize, i * Tile.TileSize * Compression), target, states);//LAST THINK ABOUT THIS
+                    tileFlyweight.Draw(new(j * Tile.TileSize, i * Tile.TileSize * Compression), target, states);
                 }
             }
             //DOORS

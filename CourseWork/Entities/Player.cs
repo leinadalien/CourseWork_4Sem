@@ -18,7 +18,7 @@ namespace CourseWork.Entities
         public Player(Location location)
         {
             MovementSpeed = 0.7f;
-            VisibilityRadius = 20;
+            VisibilityRadius = 200;//20
             Origin = new(size.X / 2, size.Y);
             shape.FillColor = Color.Blue;
             Location = location;

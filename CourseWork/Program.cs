@@ -18,7 +18,6 @@ namespace CourseWork
             window = new(new(1280, 720), "Title", Styles.Close, settings);
             window.Closed += (sender, e) => window.Close();
             window.Resized += (sender, e) => window.SetView(new(new FloatRect(0, 0, e.Width, e.Height)));
-            Content.Load();
             Game = new();
             window.KeyPressed += Game.KeyPressed;
             window.KeyReleased += Game.KeyReleased;
