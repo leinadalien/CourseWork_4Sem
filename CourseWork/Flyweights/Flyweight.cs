@@ -16,6 +16,7 @@ namespace CourseWork.FlyWeights
         }
         public void Draw(Object uniqueObject, RenderTarget target, RenderStates states)
         {
+            sharedObject.Position = uniqueObject.Position;
             sharedObject.Draw(target, states);
         }
     }
