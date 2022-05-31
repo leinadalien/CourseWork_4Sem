@@ -10,26 +10,17 @@ namespace CourseWork
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
         protected FloatRect drawingBounds;
+        public FlyweightFactory FlyweightFactory { get; set; } = new();
         public override FloatRect Bounds { get { return new(Position, new(TileCount.X * Tile.TileSize, TileCount.Y * Tile.TileSize * Compression)); } }
         public Vector2i TileCount { get; protected set; } = new(32, 32);
         public static float Compression { get; set; } = 0.5f;
-        public List<Door> Doors { get;}
-        protected Tuple<TileType, int>[,] tiles;
-        public List<Object> Objects { get;}
+        public List<Door> Doors { get; }
+        protected TileState[,] tiles;
+        public List<Object> Objects { get; }
         public Vector2f StartPosition { get; set; }
 
         public Location()
         {
-            TileFlyweightFactory tileFactory = new(
-                new Tile(TileType.GROUND, 0),
-                new Tile(TileType.GROUND, 1),
-                new Tile(TileType.GROUND, 2),
-                new Tile(TileType.GROUND, 3),
-                new Tile(TileType.GROUND, 4),
-                new Tile(TileType.GROUND, 5),
-                new Tile(TileType.GROUND, 6),
-                new Tile(TileType.GROUND, 7)
-                );
             Objects = new();
             Doors = new();
             var obj = new Stone
@@ -59,13 +50,15 @@ namespace CourseWork
         }
         public override void Draw(RenderTarget target, RenderStates states)
         {
+            Flyweight tileFlyweight;
             states.Transform *= Transform;
             for (int i = (int)(firstDrawingPoint.Y / Tile.TileSize / Compression); i < (int)(lastDrawingPoint.Y / Tile.TileSize / Compression); i++)
             {
                 for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j < (int)lastDrawingPoint.X / Tile.TileSize; j++)
                 {
-                    if (i < 0 || j < 0 || i >= TileCount.Y || j >= TileCount.X || tiles[i, j] == null) continue;
-                    target.Draw(tiles[i, j], states);//LAST THINK ABOUT THIS
+                    if (i < 0 || j < 0 || i >= TileCount.Y || j >= TileCount.X/* || tiles[i, j] == null*/) continue;
+                    tileFlyweight = FlyweightFactory.GetFlyweight(new Tile(tiles[i, j].Type, tiles[i, j].Id));
+                    tileFlyweight.Draw(new(j * Tile.TileSize, i * Tile.TileSize * Compression), target, states);//LAST THINK ABOUT THIS
                 }
             }
             //DOORS
@@ -83,7 +76,7 @@ namespace CourseWork
                     target.Draw(drawableObject, states);
                 }
             }
-            
+
         }
     }
 }

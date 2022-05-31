@@ -1,4 +1,5 @@
 ﻿using CourseWork.Entities;
+using CourseWork.Flyweights;
 using CourseWork.Locations;
 using CourseWork.Objects;
 using SFML.Graphics;
@@ -16,8 +17,8 @@ namespace CourseWork
         private List<Location> locations;
         private RectangleShape darkness;
         public Player Player;
-
-        private Tile[,] tiles;
+        public static FlyweightFactory FlyweightFactory { get; private set; } = new();
+        //private Tile[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i mapSize = new(192, 192);//192
         private Vector2f size = new(192 * Tile.TileSize, 192 * Tile.TileSize * Location.Compression);
@@ -46,8 +47,18 @@ namespace CourseWork
         }
         public World()
         {
+            FlyweightFactory = new(
+                new Tile(TileType.GROUND, 0),
+                new Tile(TileType.GROUND, 1),
+                new Tile(TileType.GROUND, 2),
+                new Tile(TileType.GROUND, 3),
+                new Tile(TileType.GROUND, 4),
+                new Tile(TileType.GROUND, 5),
+                new Tile(TileType.GROUND, 6),
+                new Tile(TileType.GROUND, 7)
+            );
             locations = new();
-            tiles = new Tile[mapSize.X, mapSize.Y];
+            //tiles = new Tile[mapSize.X, mapSize.Y];
             GenerateByLeafs();
             Player = new(locations.First());
             Player.Position = locations.First().StartPosition + locations.First().Position;
@@ -64,7 +75,10 @@ namespace CourseWork
             foreach (IntRect locationBounds in locationsBounds)
             {
                 int index = 0;
-                var location = new Glade(locationBounds);
+                var location = new Glade(locationBounds)
+                {
+                    FlyweightFactory = FlyweightFactory
+                };
                 while (index < locations.Count && location.CompareTo(locations[index]) >= 1)
                 {
                     index++;

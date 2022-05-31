@@ -1,5 +1,4 @@
-﻿using CourseWork.FlyWeights;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,31 +6,32 @@ using System.Threading.Tasks;
 
 namespace CourseWork.Flyweights
 {
-    public abstract class FlyweightFactory<SubObject> where SubObject : Object
+    public class FlyweightFactory
     {
-        private List<Tuple<Flyweight, string>> flyweights = new();
-        public FlyweightFactory(params SubObject[] objects)
+        private Dictionary<int, Flyweight> flyweights = new();
+        public FlyweightFactory(params Object[] objects)
         {
             foreach (var obj in objects)
             {
-                flyweights.Add(new(new(obj), GetKey(obj)));
+
+                flyweights.Add(obj.GetHashCode(),new(obj));
             }
         }
-        public abstract string GetKey(SubObject obj);
-        public Flyweight GetFlyweight(SubObject sharedObject)
+        public Flyweight GetFlyweight(Object sharedObject)
         {
-            string key = GetKey(sharedObject);
-            if (!flyweights.Where(x => x.Item2 == key).Any())
+            int key = sharedObject.GetHashCode();
+            if (!flyweights.Where(x => x.Key == key).Any())
             {
-                flyweights.Add(new(new(sharedObject), GetKey(sharedObject)));
+                
+                flyweights.Add(key, new(sharedObject));
             }
-            return flyweights.FirstOrDefault(x => x.Item2 == key).Item1;
+            return flyweights.First(x => x.Key == key).Value;
         }
         public void PrintFlyweights()//NEED FOR DEBUG
         {
             foreach (var flyweight in flyweights)
             {
-                Console.WriteLine(flyweight.Item2);
+                Console.WriteLine(flyweight.GetHashCode());
             }
         }
     }

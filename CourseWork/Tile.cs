@@ -3,11 +3,16 @@ using SFML.System;
 
 namespace CourseWork
 {
-    public enum TileType
+    public enum TileType : byte
     {
         NONE,
         GROUND,
         TRAIL
+    }
+    public struct TileState
+    {
+        public TileType Type;
+        public byte Id;
     }
     public class Tile : Object
     {
