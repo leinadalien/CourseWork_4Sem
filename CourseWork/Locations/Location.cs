@@ -1,4 +1,5 @@
-﻿using CourseWork.Objects;
+﻿using CourseWork.Flyweights;
+using CourseWork.Objects;
 using SFML.Graphics;
 using SFML.System;
 
@@ -13,12 +14,22 @@ namespace CourseWork
         public Vector2i TileCount { get; protected set; } = new(32, 32);
         public static float Compression { get; set; } = 0.5f;
         public List<Door> Doors { get;}
-        protected Tile[][] tiles;
+        protected Tuple<TileType, int>[,] tiles;
         public List<Object> Objects { get;}
         public Vector2f StartPosition { get; set; }
 
         public Location()
         {
+            TileFlyweightFactory tileFactory = new(
+                new Tile(TileType.GROUND, 0),
+                new Tile(TileType.GROUND, 1),
+                new Tile(TileType.GROUND, 2),
+                new Tile(TileType.GROUND, 3),
+                new Tile(TileType.GROUND, 4),
+                new Tile(TileType.GROUND, 5),
+                new Tile(TileType.GROUND, 6),
+                new Tile(TileType.GROUND, 7)
+                );
             Objects = new();
             Doors = new();
             var obj = new Stone
@@ -53,8 +64,8 @@ namespace CourseWork
             {
                 for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j < (int)lastDrawingPoint.X / Tile.TileSize; j++)
                 {
-                    if (i < 0 || j < 0 || i >= TileCount.Y || j >= TileCount.X || tiles[i][j] == null) continue;
-                    target.Draw(tiles[i][j], states);
+                    if (i < 0 || j < 0 || i >= TileCount.Y || j >= TileCount.X || tiles[i, j] == null) continue;
+                    target.Draw(tiles[i, j], states);//LAST THINK ABOUT THIS
                 }
             }
             //DOORS

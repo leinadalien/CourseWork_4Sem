@@ -11,18 +11,21 @@ namespace CourseWork
     }
     public class Tile : Object
     {
-        public TileType type = TileType.GROUND;
+        public TileType Type { get; set; } = TileType.GROUND;
+        public int Id { get; set; }
         public static int TileSize = 32;
 
         public override FloatRect Bounds => throw new NotImplementedException();
 
         public Tile() : this(TileType.GROUND, 0)
         {
-            
+            Type = TileType.GROUND;
+            Id = 0;
         }
         public Tile(TileType type, int id)
         {
-            
+            Type = type;
+            Id = id;
             shape = new(new Vector2f(TileSize, TileSize));
             switch (type)
             {
@@ -38,7 +41,7 @@ namespace CourseWork
             }
             shape.Scale = new Vector2f(1, Location.Compression);
         }
-        public void UpdateShadow(double value)
+        public void UpdateShadow(double value)//NOT USED
         {
             value = 1 - value;
             if (value < 0) value = 0;
@@ -47,7 +50,7 @@ namespace CourseWork
             byte bValue = (byte)(value * 255);
             shape.FillColor = new Color(bValue, bValue, bValue);
         }
-        public void Draw(RenderTarget target, RenderStates states)
+        public override void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
             target.Draw(shape, states);
