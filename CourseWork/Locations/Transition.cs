@@ -16,8 +16,8 @@ namespace CourseWork.Locations
             IntBounds = bounds;
             shape.FillColor = new(0, 255, 255, 120);
             TileCount = new(bounds.Width, bounds.Height);
-            Position = new(bounds.Left * Tile.TileSize, bounds.Top * Tile.TileSize * Compression);
-            size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize * Compression);
+            PositionOnMap = new(bounds.Left * Tile.TileSize, bounds.Top * Tile.TileSize);
+            size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize);
             shape.Size = new(size.X,size.Z);
         }
     }

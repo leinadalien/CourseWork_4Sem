@@ -12,40 +12,59 @@ namespace CourseWork
     }
     public struct TileState
     {
-        public TileType Type;
-        public byte Id;
+        public TileState() { }
+        public TileType Type = TileType.NONE;
+        public byte Id = 0;
+        public float Brightness = 1;
     }
     public class Tile : Object
     {
+
+        public static int TileSize = 48;//32
         private TileType type = TileType.GROUND;
         private byte id = 0;
+        private float brightness = 255;
+        private Color color = new(255,255,255);
         public TileType Type { get { return type; } }
         public int Id { get { return id; } }
-        public static int TileSize = 32;//32
+        public float Brightness
+        {
+            get
+            {
+                return brightness;
+            }
+            set
+            {
+                brightness = value;
+                shape.FillColor = new((byte)(color.R * brightness), (byte)(color.G * brightness), (byte)(color.B * brightness));
+            }
+        }
 
         public override FloatRect Bounds => throw new NotImplementedException();
 
-        public Tile(TileType type, byte id)
+        public Tile(TileState state)
         {
-            this.type = type;
-            this.id = id;
+            type = state.Type;
+            id = state.Id;
+            brightness = state.Brightness;
             shape = new(new Vector2f(TileSize, TileSize));
             switch (type)
             {
                 case TileType.GROUND:
                     shape.Texture = Content.GrassTexture;
-                    shape.TextureRect = new IntRect(id * 32, 0, 32, (int)(32 * Location.Compression));                
+                    shape.TextureRect = new IntRect(id * 32, 0, 32, 32);                
                     break;
                 case TileType.TRAIL:
-                    shape.FillColor = new(255, 255, 128);
+                    color = new(255, 255, 128);
                     break;
                 case TileType.DARK:
-                    shape.FillColor = new(0, 64, 0);
+                    color = new(0, 64, 0);
                     break;
                 default:
                     break;
             }
-            shape.Scale = new Vector2f(1, Location.Compression);
+            shape.FillColor = color;
+            //shape.Scale = new Vector2f(1, World.Compression);
         }
         public void UpdateShadow(double value)//NOT USED
         {

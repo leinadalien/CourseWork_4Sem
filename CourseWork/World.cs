@@ -14,18 +14,19 @@ namespace CourseWork
 {
     public class World : Transformable, Drawable
     {
+        public static float Compression = 0.5f;
         private List<Location> locations;
         private List<Location> transitions;
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
         private RectangleShape darkness;
         public Player Player;
-        private TileFlyweightFactory tileFlyweightFactory;
+        private TileFlyweightFactory tileFlyweightFactory = new();
         private ObjectFlyweightFactory ObjectFlyweightFactory = new();
         private TileState[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i mapSize = new(192, 192);//192
-        private Vector2f size = new(192 * Tile.TileSize, 192 * Tile.TileSize * Location.Compression);
+        private Vector2f size = new(192 * Tile.TileSize, 192 * Tile.TileSize);
         public List<Location> Locations { get { return locations; } }
         public List<Location> Transitions { get { return transitions; } }
         private void UpdateSize(Location location)
@@ -52,16 +53,6 @@ namespace CourseWork
         }
         public World()
         {
-            tileFlyweightFactory = new(
-                new Tile(TileType.GROUND, 0),
-                new Tile(TileType.GROUND, 1),
-                new Tile(TileType.GROUND, 2),
-                new Tile(TileType.GROUND, 3),
-                new Tile(TileType.GROUND, 4),
-                new Tile(TileType.GROUND, 5),
-                new Tile(TileType.GROUND, 6),
-                new Tile(TileType.GROUND, 7)
-            );
             transitions = new();
             locations = new();
             tiles = new TileState[mapSize.Y, mapSize.X];
@@ -70,7 +61,7 @@ namespace CourseWork
             GenerateTransitions(random);
             GenerateTiles(random);
             Player = new(locations.First());
-            Player.Position = locations.First().StartPosition + locations.First().Position;
+            Player.PositionOnMap = locations.First().StartPosition + locations.First().PositionOnMap;
             darkness = new((Vector2f)Program.Window.Size);
             darkness.Texture = Content.DarknessTexture;
         }
@@ -143,14 +134,14 @@ namespace CourseWork
             foreach (Location location in transitions)
             {
                 IntRect bounds = location.IntBounds;
-                //TileState[,] locationTiles = location.GenerateTiles(random);
+                TileState[,] locationTiles = location.GenerateTiles(random);
                 for (int i = 0; i < bounds.Height; i++)
                 {
                     for (int j = 0; j < bounds.Width; j++)
                     {
                         if (tiles[i + bounds.Top, j + bounds.Left].Type == TileType.NONE)
                         {
-                            tiles[i + bounds.Top, j + bounds.Left] = new() { Type = TileType.TRAIL };//locationTiles[i, j];
+                            tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
                         }
                     }
                 }
@@ -161,7 +152,7 @@ namespace CourseWork
                 {
                     if (tiles[i, j].Type == TileType.NONE)
                     {
-                        tiles[i, j] = new() { Type = TileType.DARK};
+                        tiles[i, j] = new() { Type = TileType.GROUND, Id = (byte)random.Next(8), Brightness = 0.5f};
                     }
                 }
             }
@@ -171,9 +162,10 @@ namespace CourseWork
             Player.Update(deltatime);
             UpdatePosition();
             darkness.Position = -Position;
-            UpdateDrawableObjects(Player);
+            UpdateDrawableObjects();
+            Compression = Player.PositionOnMap.Y / size.Y * 0.4f + 0.25f;
         }
-        public virtual void UpdateDrawableObjects(Entity entity)
+        public virtual void UpdateDrawableObjects()
         {
             firstDrawingPoint = -Position;
             lastDrawingPoint = -Position + (Vector2f)Program.Window.Size;
@@ -202,18 +194,19 @@ namespace CourseWork
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
-            for (int i = (int)(firstDrawingPoint.Y / Tile.TileSize / Location.Compression); i < (int)(lastDrawingPoint.Y / Tile.TileSize / Location.Compression); i++)
+            for (int i = (int)(firstDrawingPoint.Y / Tile.TileSize / Compression); i <= (int)(lastDrawingPoint.Y / Tile.TileSize / Compression); i++)
             {
-                for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j < (int)lastDrawingPoint.X / Tile.TileSize; j++)
+                for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j <= (int)lastDrawingPoint.X / Tile.TileSize; j++)
                 {
                     if (i < 0 || j < 0 || i >= mapSize.Y || j >= mapSize.X) continue;
-                    Tile temp = new(tiles[i, j].Type, tiles[i, j].Id)
+                    Tile temp = new(tiles[i, j])
                     {
-                        Position = new(j * Tile.TileSize, i * Tile.TileSize * Location.Compression)
+                        Position = new(j * Tile.TileSize, i * Tile.TileSize * Compression)
                     };
                     tileFlyweightFactory.GetFlyweight(temp).Draw(temp, target, states);
                 }
             }
+
             Player.Draw(target,states);
             target.Draw(darkness, states);
         }

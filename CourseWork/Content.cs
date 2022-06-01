@@ -6,6 +6,6 @@ namespace CourseWork
     {
         public const string DIRECTORY = "../Content/";
         public static Texture GrassTexture = new(DIRECTORY + "grass.jpg");
-        public static Texture DarknessTexture = new(DIRECTORY + "darkness.png");
+        public static Texture DarknessTexture = new(DIRECTORY + "darkness1.png");
     }
 }

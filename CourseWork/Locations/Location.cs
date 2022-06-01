@@ -11,10 +11,10 @@ namespace CourseWork
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
         protected FloatRect drawingBounds;
-        public override FloatRect Bounds { get { return new(Position, new(TileCount.X * Tile.TileSize, TileCount.Y * Tile.TileSize * Compression)); } }
+        public Vector2f PositionOnMap;
+        public override FloatRect Bounds { get { return new(PositionOnMap, new(TileCount.X * Tile.TileSize, TileCount.Y * Tile.TileSize)); } }
         public IntRect IntBounds { get; protected set; }
         public Vector2i TileCount { get; protected set; } = new(32, 32);
-        public static float Compression { get; set; } = 0.5f;
         protected List<Location> connectedLocations;
         
         public List<Location> ConnectedLocations { get { return connectedLocations; } }
@@ -27,7 +27,7 @@ namespace CourseWork
             connectedLocations = new();
             
         }
-        public TileState[,] GenerateTiles(Random random)
+        public virtual TileState[,] GenerateTiles(Random random)
         {
             TileState[,] tiles = new TileState[TileCount.Y, TileCount.X];
             for (int i = 0; i < TileCount.Y; i++)

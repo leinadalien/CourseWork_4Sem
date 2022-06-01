@@ -13,6 +13,7 @@ namespace CourseWork.Flyweights
         public override void Draw(Tile uniqueTile, RenderTarget target, RenderStates states)
         {
             sharedState.Position = uniqueTile.Position;
+            sharedState.Brightness = uniqueTile.Brightness;
             sharedState.Draw(target, states);
         }
     }
