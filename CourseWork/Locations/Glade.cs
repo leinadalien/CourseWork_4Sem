@@ -22,7 +22,6 @@ namespace CourseWork.Locations
             TileCount = new(bounds.Width, bounds.Height);
             Position = new(bounds.Left * Tile.TileSize, bounds.Top * Tile.TileSize * Compression);
             size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize * Compression);
-            Random random = new();
             StartPosition = new Vector2f(15 * Tile.TileSize, 15 * Tile.TileSize * Compression);
         }
 

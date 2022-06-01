@@ -16,6 +16,8 @@ namespace CourseWork
     {
         private List<Location> locations;
         private List<Transition> transitions;
+        protected Vector2f firstDrawingPoint;
+        protected Vector2f lastDrawingPoint;
         private RectangleShape darkness;
         public Player Player;
         public static FlyweightFactory FlyweightFactory { get; private set; } = new();
@@ -61,21 +63,10 @@ namespace CourseWork
             );
             transitions = new();
             locations = new();
-            GenerateRooms();
-            GenerateTransitions(locations);
-            tiles = new TileState[mapSize.X, mapSize.Y];
-            foreach(Location location in locations)
-            {
-                IntRect bounds = location.IntBounds;
-                TileState[,] locationTiles = location.GenerateTiles(new Random());
-                for(int i = 0; i < bounds.Height; i++)
-                {
-                    for(int j = 0; j < bounds.Width; j++)
-                    {
-                        tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
-                    }
-                }
-            }
+            Random random = new(1);
+            GenerateRooms(random);
+            GenerateTransitions(random);
+            GenerateTiles(random);
             Player = new(locations.First());
             Player.Position = locations.First().StartPosition + locations.First().Position;
             darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TileSize * 1.1f, Player.VisibilityRadius * 2 * Location.Compression * Tile.TileSize * 1.1f));
@@ -83,10 +74,10 @@ namespace CourseWork
             darkness.Texture = Content.DarknessTexture;
         }
         
-        private void GenerateRooms()
+        private void GenerateRooms(Random random)
         {
             Map root = new(new(new(0,0), mapSize));
-            root.Split(new Random());
+            root.Split(random);
             List<IntRect> locationsBounds = root.GetRooms();
             foreach (IntRect locationBounds in locationsBounds)
             {
@@ -103,9 +94,8 @@ namespace CourseWork
                 UpdateSize(location);
             }
         }
-        private void GenerateTransitions(List<Location> locations)
+        private void GenerateTransitions(Random random)
         {
-            Random random = new();
             List<Location> tempLocations = new();
             
             foreach (Location firstLocation in locations)
@@ -122,40 +112,74 @@ namespace CourseWork
                     transitions.Add(new(transitionBound));
                 }
             }
-            foreach (Transition transition in transitions)
+            List<Location> temp = new();
+            temp.AddRange(locations);
+            temp.AddRange(transitions);
+            foreach (Location firstLocation in temp)
             {
-                foreach (Location location in locations)
+                foreach (Location secondLocation in temp.Where(x => x.IntBounds != firstLocation.IntBounds))
                 {
-                    if (transition.Intersects(location))
+                    IntRect tempBounds = new(secondLocation.IntBounds.Left - 1, secondLocation.IntBounds.Top - 1, secondLocation.IntBounds.Width + 2, secondLocation.IntBounds.Height + 2);
+                    if (firstLocation.IntBounds.Intersects(tempBounds))
                     {
-                        transition.ConnectLocation(location);
-                        location.ConnectLocation(transition);
-                    }
-                }
-                foreach (Transition location in transitions)
-                {
-                    if (transition.Intersects(location))
-                    {
-                        transition.ConnectLocation(location);
-                        location.ConnectLocation(transition);
+                        firstLocation.ConnectLocation(secondLocation);
                     }
                 }
             }
             
+        }
+        private void GenerateTiles(Random random)
+        {
+            tiles = new TileState[mapSize.Y, mapSize.X];
+            foreach (Location location in locations)
+            {
+                IntRect bounds = location.IntBounds;
+                TileState[,] locationTiles = location.GenerateTiles(random);
+                for (int i = 0; i < bounds.Height; i++)
+                {
+                    for (int j = 0; j < bounds.Width; j++)
+                    {
+                        tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
+                    }
+                }
+            }
+            foreach (Location location in transitions)
+            {
+                IntRect bounds = location.IntBounds;
+                //TileState[,] locationTiles = location.GenerateTiles(random);
+                for (int i = 0; i < bounds.Height; i++)
+                {
+                    for (int j = 0; j < bounds.Width; j++)
+                    {
+                        if (tiles[i + bounds.Top, j + bounds.Left].Type == TileType.NONE)
+                        {
+                            tiles[i + bounds.Top, j + bounds.Left] = new() { Type = TileType.TRAIL };//locationTiles[i, j];
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < mapSize.X; i++)
+            {
+                for (int j = 0; j < mapSize.Y; j++)
+                {
+                    if (tiles[i, j].Type == TileType.NONE)
+                    {
+                        tiles[i, j] = new() { Type = TileType.DARK};
+                    }
+                }
+            }
         }
         public void Update(int deltatime)
         {
             Player.Update(deltatime);
             darkness.Position = Player.Position;
             UpdatePosition();
-            foreach (Location location in locations)
-            {
-                location.UpdateDrawableObjects(Player);
-            }
-            foreach (Transition location in transitions)
-            {
-                location.UpdateDrawableObjects(Player);
-            }
+            UpdateDrawableObjects(Player);
+        }
+        public virtual void UpdateDrawableObjects(Entity entity)
+        {
+            firstDrawingPoint = -Position;
+            lastDrawingPoint = -Position + (Vector2f)Program.Window.Size;
         }
         public void UpdatePosition()
         {
@@ -181,7 +205,7 @@ namespace CourseWork
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
-            
+            /*
             Player.Position -= Player.Location.Position;
             Player.Location.AddObject(Player);
             List<Location> temp = new();
@@ -192,9 +216,19 @@ namespace CourseWork
                 location.Draw(target, states);
             }
             Player.Location.RemoveObject(Player);
-            Player.Position += Player.Location.Position;
+            Player.Position += Player.Location.Position;*/
+            Flyweight tileFlyweight;
+            for (int i = (int)(firstDrawingPoint.Y / Tile.TileSize / Location.Compression); i < (int)(lastDrawingPoint.Y / Tile.TileSize / Location.Compression); i++)
+            {
+                for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j < (int)lastDrawingPoint.X / Tile.TileSize; j++)
+                {
+                    if (i < 0 || j < 0 || i >= mapSize.Y || j >= mapSize.X) continue;
+                    tileFlyweight = FlyweightFactory.GetFlyweight(new Tile(tiles[i, j].Type, tiles[i, j].Id));
+                    tileFlyweight.Draw(new(j * Tile.TileSize, i * Tile.TileSize * Location.Compression), target, states);
+                }
+            }
+            Player.Draw(target,states);
             target.Draw(darkness, states);
-            
         }
     }
 }

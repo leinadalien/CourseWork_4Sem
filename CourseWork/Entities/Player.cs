@@ -77,8 +77,7 @@ namespace CourseWork.Entities
                     Position = positionInBounds;
                 }
             }
-            
-            
+            prevPosition = Position;//not sure
         }
         private void UpdateCollision()
         {

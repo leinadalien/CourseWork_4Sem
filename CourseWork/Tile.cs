@@ -8,6 +8,7 @@ namespace CourseWork
         NONE = 0,
         GROUND = 1,
         TRAIL = 2,
+        DARK = 3,
     }
     public struct TileState
     {
@@ -36,6 +37,9 @@ namespace CourseWork
                 case TileType.TRAIL:
                     shape.FillColor = new(255, 255, 128);
                     break;
+                case TileType.DARK:
+                    shape.FillColor = new(0, 64, 0);
+                    break;
                 default:
                     break;
             }
@@ -54,6 +58,12 @@ namespace CourseWork
         {
             states.Transform *= Transform;
             target.Draw(shape, states);
+        }
+        public override int GetHashCode()
+        {
+            int result = Type.GetHashCode();
+            result = 31 * result + Id.GetHashCode();
+            return result;
         }
     }
 }

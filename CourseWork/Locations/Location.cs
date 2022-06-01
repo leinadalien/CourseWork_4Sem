@@ -63,11 +63,11 @@ namespace CourseWork
             firstDrawingPoint = (entity.Position - new Vector2f(entity.VisibilityRadius * Tile.TileSize, entity.VisibilityRadius * Tile.TileSize * Compression)) - Position;
             lastDrawingPoint = (entity.Position + new Vector2f((entity.VisibilityRadius + 1) * Tile.TileSize, (entity.VisibilityRadius + 1) * Tile.TileSize * Compression)) - Position;
             drawingBounds = new(firstDrawingPoint, new(lastDrawingPoint.X - firstDrawingPoint.X, lastDrawingPoint.Y - firstDrawingPoint.Y));
-        }
+        }/*
         public override void Draw(RenderTarget target, RenderStates states)
         {
-            Flyweight tileFlyweight;
             states.Transform *= Transform;
+            Flyweight tileFlyweight;
             for (int i = (int)(firstDrawingPoint.Y / Tile.TileSize / Compression); i < (int)(lastDrawingPoint.Y / Tile.TileSize / Compression); i++)
             {
                 for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j < (int)lastDrawingPoint.X / Tile.TileSize; j++)
@@ -84,7 +84,8 @@ namespace CourseWork
                     target.Draw(drawableObject, states);
                 }
             }
-
+        
         }
+    */
     }
 }
