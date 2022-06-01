@@ -17,22 +17,24 @@ namespace CourseWork
     }
     public class Tile : Object
     {
-        public TileType Type { get; set; } = TileType.GROUND;
-        public int Id { get; set; } = 0;
+        private TileType type = TileType.GROUND;
+        private byte id = 0;
+        public TileType Type { get { return type; } }
+        public int Id { get { return id; } }
         public static int TileSize = 32;//32
 
         public override FloatRect Bounds => throw new NotImplementedException();
 
-        public Tile(TileType type, int id)
+        public Tile(TileType type, byte id)
         {
-            Type = type;
-            Id = id;
+            this.type = type;
+            this.id = id;
             shape = new(new Vector2f(TileSize, TileSize));
             switch (type)
             {
                 case TileType.GROUND:
                     shape.Texture = Content.GrassTexture;
-                    shape.TextureRect = new IntRect(id * 32, 0, 32, (int)(32 * Location.Compression));
+                    shape.TextureRect = new IntRect(id * 32, 0, 32, (int)(32 * Location.Compression));                
                     break;
                 case TileType.TRAIL:
                     shape.FillColor = new(255, 255, 128);
@@ -61,8 +63,8 @@ namespace CourseWork
         }
         public override int GetHashCode()
         {
-            int result = Type.GetHashCode();
-            result = 31 * result + Id.GetHashCode();
+            int result = type.GetHashCode();
+            result = 31 * result + id.GetHashCode();
             return result;
         }
     }

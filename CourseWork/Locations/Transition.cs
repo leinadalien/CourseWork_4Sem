@@ -19,31 +19,6 @@ namespace CourseWork.Locations
             Position = new(bounds.Left * Tile.TileSize, bounds.Top * Tile.TileSize * Compression);
             size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize * Compression);
             shape.Size = new(size.X,size.Z);
-            Random random = new();
-            tiles = new TileState[TileCount.Y, TileCount.X];
-            for (int i = 0; i < TileCount.Y; i++)
-            {
-                for (int j = 0; j < TileCount.X; j++)
-                {
-                    tiles[i, j] = new() { Type = TileType.GROUND, Id = (byte)random.Next(8) };
-                }
-            }
-            StartPosition = new Vector2f(15 * Tile.TileSize, 15 * Tile.TileSize * Compression);
-        }/*
-        public override void Draw(RenderTarget target, RenderStates states)
-        {
-            states.Transform *= Transform;
-            foreach (var drawableObject in Objects)
-            {
-                if (drawingBounds.Intersects(drawableObject.Bounds))
-                {
-                    target.Draw(drawableObject, states);
-                }
-            }
-            
-            
-            shape.Draw(target, states);
-            
-        }*/
+        }
     }
 }

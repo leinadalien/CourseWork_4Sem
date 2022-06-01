@@ -6,26 +6,9 @@ using System.Threading.Tasks;
 
 namespace CourseWork.Flyweights
 {
-    public class FlyweightFactory
+    public abstract class FlyweightFactory<T> : IFlyweightFactory<T>
     {
-        private Dictionary<int, Flyweight> flyweights = new();
-        public FlyweightFactory(params Object[] objects)
-        {
-            foreach (var obj in objects)
-            {
-
-                flyweights.Add(obj.GetHashCode(),new(obj));
-            }
-        }
-        public Flyweight GetFlyweight(Object sharedObject)
-        {
-            int key = sharedObject.GetHashCode();
-            if (!flyweights.Where(x => x.Key == key).Any())
-            {
-                
-                flyweights.Add(key, new(sharedObject));
-            }
-            return flyweights.First(x => x.Key == key).Value;
-        }
+        protected Dictionary<int, IFlyweight<T>> flyweights = new();
+        public abstract IFlyweight<T> GetFlyweight(T sharedState);
     }
 }

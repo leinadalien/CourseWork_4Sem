@@ -1,5 +1,4 @@
 ﻿using SFML.Graphics;
-using SFML.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +7,13 @@ using System.Threading.Tasks;
 
 namespace CourseWork.Flyweights
 {
-    public class Flyweight
+    public abstract class Flyweight<T> : IFlyweight<T>
     {
-        private Object sharedObject;
-        public Flyweight(Object sharedObject)
+        protected T sharedState;
+        protected Flyweight(T sharedState)
         {
-            this.sharedObject = sharedObject;
+            this.sharedState = sharedState;
         }
-        public void Draw(Vector2f Position, RenderTarget target, RenderStates states)
-        {
-            sharedObject.Position = Position;
-            sharedObject.Draw(target, states);
-        }
+        public abstract void Draw(T uniqueState, RenderTarget target, RenderStates states);
     }
 }

@@ -15,18 +15,19 @@ namespace CourseWork
     public class World : Transformable, Drawable
     {
         private List<Location> locations;
-        private List<Transition> transitions;
+        private List<Location> transitions;
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
         private RectangleShape darkness;
         public Player Player;
-        public static FlyweightFactory FlyweightFactory { get; private set; } = new();
+        private TileFlyweightFactory tileFlyweightFactory;
+        private ObjectFlyweightFactory ObjectFlyweightFactory = new();
         private TileState[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i mapSize = new(192, 192);//192
         private Vector2f size = new(192 * Tile.TileSize, 192 * Tile.TileSize * Location.Compression);
         public List<Location> Locations { get { return locations; } }
-        public List<Transition> Transitions { get { return transitions; } }
+        public List<Location> Transitions { get { return transitions; } }
         private void UpdateSize(Location location)
         {
             Vector2f deltaPosition = new(0, 0);
@@ -51,7 +52,7 @@ namespace CourseWork
         }
         public World()
         {
-            FlyweightFactory = new(
+            tileFlyweightFactory = new(
                 new Tile(TileType.GROUND, 0),
                 new Tile(TileType.GROUND, 1),
                 new Tile(TileType.GROUND, 2),
@@ -63,14 +64,14 @@ namespace CourseWork
             );
             transitions = new();
             locations = new();
+            tiles = new TileState[mapSize.Y, mapSize.X];
             Random random = new(1);
             GenerateRooms(random);
             GenerateTransitions(random);
             GenerateTiles(random);
             Player = new(locations.First());
             Player.Position = locations.First().StartPosition + locations.First().Position;
-            darkness = new(new Vector2f(Player.VisibilityRadius * 2 * Tile.TileSize * 1.1f, Player.VisibilityRadius * 2 * Location.Compression * Tile.TileSize * 1.1f));
-            darkness.Origin = darkness.Size / 2;
+            darkness = new((Vector2f)Program.Window.Size);
             darkness.Texture = Content.DarknessTexture;
         }
         
@@ -82,10 +83,7 @@ namespace CourseWork
             foreach (IntRect locationBounds in locationsBounds)
             {
                 int index = 0;
-                var location = new Glade(locationBounds)
-                {
-                    FlyweightFactory = FlyweightFactory
-                };
+                var location = new Glade(locationBounds);
                 while (index < locations.Count && location.CompareTo(locations[index]) >= 1)
                 {
                     index++;
@@ -109,7 +107,7 @@ namespace CourseWork
                 List<IntRect> transitionBounds = Map.CreateTransition(firstLocation.IntBounds, secondLocation.IntBounds, random);
                 foreach (IntRect transitionBound in transitionBounds)
                 {
-                    transitions.Add(new(transitionBound));
+                    transitions.Add(new Transition(transitionBound));
                 }
             }
             List<Location> temp = new();
@@ -117,10 +115,10 @@ namespace CourseWork
             temp.AddRange(transitions);
             foreach (Location firstLocation in temp)
             {
+                IntRect tempBounds = new(firstLocation.IntBounds.Left - 1, firstLocation.IntBounds.Top - 1, firstLocation.IntBounds.Width + 2, firstLocation.IntBounds.Height + 2);
                 foreach (Location secondLocation in temp.Where(x => x.IntBounds != firstLocation.IntBounds))
                 {
-                    IntRect tempBounds = new(secondLocation.IntBounds.Left - 1, secondLocation.IntBounds.Top - 1, secondLocation.IntBounds.Width + 2, secondLocation.IntBounds.Height + 2);
-                    if (firstLocation.IntBounds.Intersects(tempBounds))
+                    if (tempBounds.Intersects(secondLocation.IntBounds))
                     {
                         firstLocation.ConnectLocation(secondLocation);
                     }
@@ -130,7 +128,6 @@ namespace CourseWork
         }
         private void GenerateTiles(Random random)
         {
-            tiles = new TileState[mapSize.Y, mapSize.X];
             foreach (Location location in locations)
             {
                 IntRect bounds = location.IntBounds;
@@ -172,8 +169,8 @@ namespace CourseWork
         public void Update(int deltatime)
         {
             Player.Update(deltatime);
-            darkness.Position = Player.Position;
             UpdatePosition();
+            darkness.Position = -Position;
             UpdateDrawableObjects(Player);
         }
         public virtual void UpdateDrawableObjects(Entity entity)
@@ -205,26 +202,16 @@ namespace CourseWork
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
-            /*
-            Player.Position -= Player.Location.Position;
-            Player.Location.AddObject(Player);
-            List<Location> temp = new();
-            temp.AddRange(locations);
-            temp.AddRange(transitions);
-            foreach (Location location in temp)
-            {
-                location.Draw(target, states);
-            }
-            Player.Location.RemoveObject(Player);
-            Player.Position += Player.Location.Position;*/
-            Flyweight tileFlyweight;
             for (int i = (int)(firstDrawingPoint.Y / Tile.TileSize / Location.Compression); i < (int)(lastDrawingPoint.Y / Tile.TileSize / Location.Compression); i++)
             {
                 for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j < (int)lastDrawingPoint.X / Tile.TileSize; j++)
                 {
                     if (i < 0 || j < 0 || i >= mapSize.Y || j >= mapSize.X) continue;
-                    tileFlyweight = FlyweightFactory.GetFlyweight(new Tile(tiles[i, j].Type, tiles[i, j].Id));
-                    tileFlyweight.Draw(new(j * Tile.TileSize, i * Tile.TileSize * Location.Compression), target, states);
+                    Tile temp = new(tiles[i, j].Type, tiles[i, j].Id)
+                    {
+                        Position = new(j * Tile.TileSize, i * Tile.TileSize * Location.Compression)
+                    };
+                    tileFlyweightFactory.GetFlyweight(temp).Draw(temp, target, states);
                 }
             }
             Player.Draw(target,states);
