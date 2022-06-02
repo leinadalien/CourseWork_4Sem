@@ -12,11 +12,10 @@ namespace CourseWork.Entities
     public class Player : Entity
     {
         public float MovementSpeed = 0.15f;
-        public Vector2f PositionOnMap;
         public Vector2f Movement;
         private Vector2f prevPosition;
         public Location Location { get; set; }
-        public override FloatRect Bounds { get { return new(new Vector2f(PositionOnMap.X - Origin.X, PositionOnMap.Y - size.Z), new(size.X, size.Z)); } }
+        public override FloatRect Bounds { get { return new(new Vector2f(TruePosition.X - Origin.X, TruePosition.Y - size.Z), new(size.X, size.Z)); } }
         public Player(Location location)
         {
             MovementSpeed = 0.7f;
@@ -24,7 +23,7 @@ namespace CourseWork.Entities
             Origin = new(size.X / 2, size.Y);
             shape.FillColor = Color.Blue;
             Location = location;
-            prevPosition = PositionOnMap;
+            prevPosition = TruePosition;
         }
         public override void Draw(RenderTarget target, RenderStates states)
         {
@@ -35,11 +34,11 @@ namespace CourseWork.Entities
         {
             UpdateMove(deltaTime);
             UpdateCollision();
-            Position = new(PositionOnMap.X, PositionOnMap.Y * World.Compression);
+            Position = new(TruePosition.X, TruePosition.Y * World.Compression);
         }
         private Vector2f CheckBoundsFor(Location location)
         {
-            Vector2f localPosition = PositionOnMap - location.PositionOnMap;
+            Vector2f localPosition = TruePosition - location.TruePosition;
             if (localPosition.X < Origin.X)
             {
                 localPosition.X = Origin.X;
@@ -56,18 +55,18 @@ namespace CourseWork.Entities
             {
                 localPosition.Y = location.Thickness;
             }
-            return localPosition + location.PositionOnMap;
+            return localPosition + location.TruePosition;
         }
         private void UpdateMove(int deltaTime)
         {
-            PositionOnMap += Movement * deltaTime;
+            TruePosition += Movement * deltaTime;
             Vector2f positionInBounds = CheckBoundsFor(Location); 
-            if (positionInBounds != PositionOnMap)
+            if (positionInBounds != TruePosition)
             {
                 bool isInTransition = false;
                 foreach(Location location in Location.ConnectedLocations)
                 {
-                    if (CheckBoundsFor(location) == PositionOnMap)
+                    if (CheckBoundsFor(location) == TruePosition)
                     {
                         isInTransition = true;
                         Location = location;
@@ -76,33 +75,29 @@ namespace CourseWork.Entities
                 }
                 if (!isInTransition)
                 {
-                    PositionOnMap = positionInBounds;
+                    TruePosition = positionInBounds;
                 }
             }
-            prevPosition = PositionOnMap;//not sure
         }
         private void UpdateCollision()
         {
-            PositionOnMap -= Location.PositionOnMap;
-            prevPosition -= Location.PositionOnMap;
             foreach (var collisionObject in Location.Objects)
             {
                 if (Intersects(collisionObject))
                 {
-                    Vector2f insidePosition = new(PositionOnMap.X, PositionOnMap.Y);
-                    PositionOnMap = new(prevPosition.X, insidePosition.Y);
+                    Vector2f insidePosition = new(TruePosition.X, TruePosition.Y);
+                    TruePosition = new(prevPosition.X, insidePosition.Y);
                     if (Intersects(collisionObject))
                     {
-                        PositionOnMap = new(insidePosition.X, prevPosition.Y);
+                        TruePosition = new(insidePosition.X, prevPosition.Y);
                         if (Intersects(collisionObject))
                         {
-                            PositionOnMap = prevPosition;
+                            TruePosition = prevPosition;
                         }
                     }
                 }
             }
-            PositionOnMap += Location.PositionOnMap;
-            prevPosition = PositionOnMap;
+            prevPosition = TruePosition;
         }
     }
 }

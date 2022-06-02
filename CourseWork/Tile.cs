@@ -17,10 +17,10 @@ namespace CourseWork
         public byte Id = 0;
         public float Brightness = 1;
     }
-    public class Tile : Object
+    public class Tile : Transformable, Drawable
     {
-
-        public static int TileSize = 48;//32
+        private RectangleShape shape;
+        public static int TileSize = 48;//48
         private TileType type = TileType.GROUND;
         private byte id = 0;
         private float brightness = 255;
@@ -39,9 +39,6 @@ namespace CourseWork
                 shape.FillColor = new((byte)(color.R * brightness), (byte)(color.G * brightness), (byte)(color.B * brightness));
             }
         }
-
-        public override FloatRect Bounds => throw new NotImplementedException();
-
         public Tile(TileState state)
         {
             type = state.Type;
@@ -64,7 +61,6 @@ namespace CourseWork
                     break;
             }
             shape.FillColor = color;
-            //shape.Scale = new Vector2f(1, World.Compression);
         }
         public void UpdateShadow(double value)//NOT USED
         {
@@ -75,7 +71,7 @@ namespace CourseWork
             byte bValue = (byte)(value * 255);
             shape.FillColor = new Color(bValue, bValue, bValue);
         }
-        public override void Draw(RenderTarget target, RenderStates states)
+        public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
             target.Draw(shape, states);

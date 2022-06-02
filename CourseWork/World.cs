@@ -61,7 +61,7 @@ namespace CourseWork
             GenerateTransitions(random);
             GenerateTiles(random);
             Player = new(locations.First());
-            Player.PositionOnMap = locations.First().StartPosition + locations.First().PositionOnMap;
+            Player.TruePosition = locations.First().StartPosition + locations.First().TruePosition;
             darkness = new((Vector2f)Program.Window.Size);
             darkness.Texture = Content.DarknessTexture;
         }
@@ -163,7 +163,7 @@ namespace CourseWork
             UpdatePosition();
             darkness.Position = -Position;
             UpdateDrawableObjects();
-            Compression = Player.PositionOnMap.Y / size.Y * 0.4f + 0.25f;
+            Compression = Player.TruePosition.Y / size.Y * 0.4f + 0.25f;
         }
         public virtual void UpdateDrawableObjects()
         {
@@ -206,7 +206,13 @@ namespace CourseWork
                     tileFlyweightFactory.GetFlyweight(temp).Draw(temp, target, states);
                 }
             }
-
+            foreach(Location location in locations)
+            {
+                foreach(Object drawableObject in location.Objects)
+                {
+                    drawableObject.Draw(target, states);
+                }
+            }
             Player.Draw(target,states);
             target.Draw(darkness, states);
         }

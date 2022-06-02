@@ -13,14 +13,17 @@ namespace CourseWork.Locations
     {
         public Glade(IntRect bounds)
         {
-            var obj = new Stone
-            {
-                Position = new(3 * Tile.TileSize, 3 * Tile.TileSize)
-            };
-            AddObject(obj);
             IntBounds = bounds;
             TileCount = new(bounds.Width, bounds.Height);
-            PositionOnMap = new(bounds.Left * Tile.TileSize, bounds.Top * Tile.TileSize);
+            TruePosition = new(bounds.Left * Tile.TileSize, bounds.Top * Tile.TileSize);
+
+            var obj = new Stone
+            {
+                TruePosition = new(3 * Tile.TileSize, 3 * Tile.TileSize)
+            };
+            obj.TruePosition += TruePosition;
+            AddObject(obj);
+            
             size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize);
             StartPosition = new Vector2f(15 * Tile.TileSize, 15 * Tile.TileSize);
         }

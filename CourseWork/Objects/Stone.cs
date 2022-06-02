@@ -10,13 +10,12 @@ namespace CourseWork.Objects
 {
     public class Stone : Object
     {
-        public Vector2f PositionOnMap;
         public Stone()
         {
             Origin = new(0, size.Y);
             shape.FillColor = new(54, 54, 54);
         }
 
-        public override FloatRect Bounds {get { return new(new Vector2f(PositionOnMap.X, PositionOnMap.Y - size.Z), new(size.X, size.Y)); } }
+        public override FloatRect Bounds {get { return new(new Vector2f(TruePosition.X, TruePosition.Y - size.Z), new(size.X, size.Y)); } }
     }
 }

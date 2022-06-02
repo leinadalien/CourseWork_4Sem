@@ -27,7 +27,7 @@ namespace CourseWork
             world.Update(clock.ElapsedTime.AsMilliseconds());
             //Game stats
             Console.SetCursorPosition(0, 0);
-            Console.WriteLine($"Player position: X({(int)world.Player.PositionOnMap.X}) Y({(int)world.Player.PositionOnMap.Y}) [{(int)world.Player.PositionOnMap.X / Tile.TileSize}][{(int)world.Player.PositionOnMap.Y / Tile.TileSize}]          ");
+            Console.WriteLine($"Player position: X({(int)world.Player.TruePosition.X}) Y({(int)world.Player.TruePosition.Y}) [{(int)world.Player.TruePosition.X / Tile.TileSize}][{(int)world.Player.TruePosition.Y / Tile.TileSize}]          ");
             Console.WriteLine($"Camera position: X({-(int)world.Position.X}) Y({-(int)world.Position.Y})      ");
             Console.WriteLine($"Camera X: [{0 - (int)world.Position.X / Tile.TileSize},{Program.Window.Size.X / Tile.TileSize + 1 - (int)world.Position.X / Tile.TileSize}]    ");
             Console.WriteLine($"Camera Y: [{0 - (int)world.Position.Y / Tile.TileSize},{Program.Window.Size.Y / Tile.TileSize + 1 - (int)world.Position.Y / Tile.TileSize}]    ");

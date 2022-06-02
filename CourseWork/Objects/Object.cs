@@ -13,6 +13,7 @@ namespace CourseWork
     {
         protected RectangleShape shape;
         protected Vector3f size;
+        public Vector2f TruePosition;
         public float Thickness { get { return size.Z; } set { size.Z = value; } }
         public float Width { get { return size.X; } set { size.X = value; } }
         public float Height { get { return size.Y; } set { size.Y = value; } }
@@ -24,6 +25,7 @@ namespace CourseWork
         }
         public virtual void Draw(RenderTarget target, RenderStates states)
         {
+            Position = new(TruePosition.X, TruePosition.Y * World.Compression);
             states.Transform *= Transform;
             target.Draw(shape, states);
         }

@@ -11,8 +11,7 @@ namespace CourseWork
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
         protected FloatRect drawingBounds;
-        public Vector2f PositionOnMap;
-        public override FloatRect Bounds { get { return new(PositionOnMap, new(TileCount.X * Tile.TileSize, TileCount.Y * Tile.TileSize)); } }
+        public override FloatRect Bounds { get { return new(TruePosition, new(TileCount.X * Tile.TileSize, TileCount.Y * Tile.TileSize)); } }
         public IntRect IntBounds { get; protected set; }
         public Vector2i TileCount { get; protected set; } = new(32, 32);
         protected List<Location> connectedLocations;
