@@ -21,10 +21,9 @@ namespace CourseWork
         protected Vector2f lastDrawingPoint;
         private RectangleShape darkness;
         public Player Player;
-        private TileFlyweightFactory tileFlyweightFactory = new();
         private ObjectFlyweightFactory ObjectFlyweightFactory = new();
         private FloatRect drawingBounds;
-        private TileState[,] tiles;
+        private Tile[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i mapSize = new(192, 192);//192
         private Vector2f size = new(192 * Tile.TileSize, 192 * Tile.TileSize);
@@ -58,7 +57,7 @@ namespace CourseWork
             DrawableObjects = new();
             transitions = new();
             locations = new();
-            tiles = new TileState[mapSize.Y, mapSize.X];
+            tiles = new Tile[mapSize.Y, mapSize.X];
             Random random = new(1);
             GenerateRooms(random);
             GenerateTransitions(random);
@@ -127,7 +126,7 @@ namespace CourseWork
             foreach (Location location in locations)
             {
                 IntRect bounds = location.IntBounds;
-                TileState[,] locationTiles = location.GenerateTiles(random);
+                Tile[,] locationTiles = location.GenerateTiles(random);
                 for (int i = 0; i < bounds.Height; i++)
                 {
                     for (int j = 0; j < bounds.Width; j++)
@@ -139,13 +138,13 @@ namespace CourseWork
             foreach (Location location in transitions)
             {
                 IntRect bounds = location.IntBounds;
-                TileState[,] locationTiles = location.GenerateTiles(random);
+                Tile[,] locationTiles = location.GenerateTiles(random);
                 
                 for (int i = 0; i < bounds.Height; i++)
                 {
                     for (int j = 0; j < bounds.Width; j++)
                     {
-                        if (tiles[i + bounds.Top, j + bounds.Left].Type == TileType.NONE)
+                        if (tiles[i + bounds.Top, j + bounds.Left] == null)
                         {
                             tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
                         }
@@ -156,9 +155,9 @@ namespace CourseWork
             {
                 for (int j = 0; j < mapSize.Y; j++)
                 {
-                    if (tiles[i, j].Type == TileType.NONE)
+                    if (tiles[i, j] == null)
                     {
-                        tiles[i, j] = new() { Type = TileType.GROUND, Id = (byte)random.Next(4), Brightness = 0.5f};
+                        tiles[i, j] = new( new() { Type = TileType.GROUND, Id = (byte)random.Next(4), Brightness = 0.5f });
                     }
                 }
             }
@@ -216,11 +215,8 @@ namespace CourseWork
                 for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j <= (int)lastDrawingPoint.X / Tile.TileSize; j++)
                 {
                     if (i < 0 || j < 0 || i >= mapSize.Y || j >= mapSize.X) continue;
-                    Tile temp = new(tiles[i, j])
-                    {
-                        Position = new(j * Tile.TileSize, i * Tile.TileSize * Compression)
-                    };
-                    tileFlyweightFactory.GetFlyweight(temp).Draw(temp, target, states);
+                    tiles[i, j].Position = new(j * Tile.TileSize, i * Tile.TileSize * Compression);
+                    tiles[i, j].Draw(target, states);
                 }
             }
             foreach (Object drawableObject in DrawableObjects)

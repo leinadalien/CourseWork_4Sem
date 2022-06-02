@@ -48,12 +48,9 @@ namespace CourseWork
         }
         public override int GetHashCode()
         {
-            int result = shape.FillColor.GetHashCode();
-            result = 31 * result + shape.OutlineColor.GetHashCode();
-            result = 31 *result + shape.OutlineThickness.GetHashCode();
-            result = 31 * result + shape.TextureRect.GetHashCode();
+            int result = shape.TextureRect.GetHashCode();
             result = 31 * result + shape.Texture.NativeHandle.GetHashCode();
-            result = 31 * result + size.GetHashCode();
+            result = 31 * result + shape.Texture.Size.GetHashCode();
             return result;
         }
     }

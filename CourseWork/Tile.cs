@@ -20,7 +20,7 @@ namespace CourseWork
     public class Tile : Transformable, Drawable
     {
         private RectangleShape shape;
-        public static int TileSize = 48;//48
+        public static int TileSize = 32;//48
         private TileType type = TileType.GROUND;
         private byte id = 0;
         private float brightness = 255;
@@ -39,11 +39,11 @@ namespace CourseWork
                 shape.FillColor = new((byte)(color.R * brightness), (byte)(color.G * brightness), (byte)(color.B * brightness));
             }
         }
+        public Tile() : this(new()) { }
         public Tile(TileState state)
         {
             type = state.Type;
             id = state.Id;
-            brightness = state.Brightness;
             shape = new(new Vector2f(TileSize, TileSize * 1.5f));
             switch (type)
             {
@@ -62,7 +62,8 @@ namespace CourseWork
                 default:
                     break;
             }
-            shape.FillColor = color;
+            brightness = state.Brightness;
+            shape.FillColor = new((byte)(color.R * brightness), (byte)(color.G * brightness), (byte)(color.B * brightness));
         }
         public void Draw(RenderTarget target, RenderStates states)
         {

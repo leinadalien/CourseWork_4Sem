@@ -26,14 +26,14 @@ namespace CourseWork
             connectedLocations = new();
             
         }
-        public virtual TileState[,] GenerateTiles(Random random)
+        public virtual Tile[,] GenerateTiles(Random random)
         {
-            TileState[,] tiles = new TileState[TileCount.Y, TileCount.X];
+            Tile[,] tiles = new Tile[TileCount.Y, TileCount.X];
             for (int i = 0; i < TileCount.Y; i++)
             {
                 for (int j = 0; j < TileCount.X; j++)
                 {
-                    tiles[i, j] = new() { Type = TileType.GROUND, Id = (byte)random.Next(8) };
+                    tiles[i, j] = new(new() { Type = TileType.GROUND, Id = (byte)random.Next(8) });
                 }
             }
             return tiles;
