@@ -36,10 +36,10 @@ namespace CourseWork
 
         public int CompareTo(Object? other)
         {
-            int result = Position.Y.CompareTo(other?.Position.Y);
+            int result = TruePosition.Y.CompareTo(other?.TruePosition.Y);
             if (result == 0)
             {
-                return Position.X.CompareTo(other?.Position.X);
+                return TruePosition.X.CompareTo(other?.TruePosition.X);
             }
             else
             {

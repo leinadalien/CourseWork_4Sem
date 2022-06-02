@@ -20,7 +20,7 @@ namespace CourseWork
     public class Tile : Transformable, Drawable
     {
         private RectangleShape shape;
-        public static int TileSize = 32;//48
+        public static int TileSize = 48;//48
         private TileType type = TileType.GROUND;
         private byte id = 0;
         private float brightness = 255;

@@ -33,11 +33,13 @@ namespace CourseWork
             {
                 for (int j = 0; j < TileCount.X; j++)
                 {
+                   
                     tiles[i, j] = new(new() { Type = TileType.GROUND, Id = (byte)random.Next(8) });
                 }
             }
             return tiles;
         }
+        public abstract List<Object> GenerateObjects(Random random);
         public void ConnectLocation(Location location)
         {
             connectedLocations.Add(location);

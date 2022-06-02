@@ -62,7 +62,7 @@ namespace CourseWork
             GenerateRooms(random);
             GenerateTransitions(random);
             GenerateTiles(random);
-            GenerateObjects();
+            GenerateObjects(random);
             Player = new(locations.First());
             Player.TruePosition = locations.First().StartPosition + locations.First().TruePosition;
             darkness = new((Vector2f)Program.Window.Size);
@@ -144,10 +144,10 @@ namespace CourseWork
                 {
                     for (int j = 0; j < bounds.Width; j++)
                     {
-                        if (tiles[i + bounds.Top, j + bounds.Left] == null)
-                        {
-                            tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
-                        }
+                       
+                        tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
+
+
                     }
                 }
             }
@@ -157,16 +157,16 @@ namespace CourseWork
                 {
                     if (tiles[i, j] == null)
                     {
-                        tiles[i, j] = new( new() { Type = TileType.GROUND, Id = (byte)random.Next(4), Brightness = 0.5f });
+                        tiles[i, j] = new( new() { Type = TileType.GROUND, Id = (byte)random.Next(4), Brightness = 0.64f + (float)random.NextDouble() * 0.08f });
                     }
                 }
             }
         }
-        private void GenerateObjects()
+        private void GenerateObjects(Random random)
         {
             foreach (Location location in locations)
             {
-                AddObjects(location.Objects);
+                AddObjects(location.GenerateObjects(random));
             }
         }
         public void Update(int deltatime)
@@ -184,7 +184,6 @@ namespace CourseWork
             firstDrawingPoint = -Position;
             lastDrawingPoint = -Position + (Vector2f)Program.Window.Size;
             drawingBounds = new(firstDrawingPoint.X, firstDrawingPoint.Y / Compression, lastDrawingPoint.X - firstDrawingPoint.X, (lastDrawingPoint.Y - firstDrawingPoint.Y) / Compression);
-
         }
         public void UpdatePosition()
         {

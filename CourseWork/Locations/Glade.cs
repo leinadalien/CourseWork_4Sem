@@ -17,17 +17,21 @@ namespace CourseWork.Locations
             TileCount = new(bounds.Width, bounds.Height);
             TruePosition = new(bounds.Left * Tile.TileSize, bounds.Top * Tile.TileSize);
 
-            var obj = new Stone
-            {
-                TruePosition = new(3 * Tile.TileSize, 3 * Tile.TileSize)
-            };
-            obj.TruePosition += TruePosition;
-            Objects.Add(obj);
+            
             
             size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize);
             StartPosition = new Vector2f(15 * Tile.TileSize, 15 * Tile.TileSize);
         }
 
-        
+        public override List<Object> GenerateObjects(Random random)
+        {
+            var obj = new Stone(random.Next(4))
+            {
+                TruePosition = new(3 * Tile.TileSize, 3 * Tile.TileSize)
+            };
+            obj.TruePosition += TruePosition;
+            Objects.Add(obj);
+            return Objects;
+        }
     }
 }

@@ -20,5 +20,10 @@ namespace CourseWork.Locations
             size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize);
             shape.Size = new(size.X,size.Z);
         }
+
+        public override List<Object> GenerateObjects(Random random)
+        {
+            return Objects;
+        }
     }
 }
