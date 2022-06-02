@@ -23,12 +23,14 @@ namespace CourseWork
         public Player Player;
         private TileFlyweightFactory tileFlyweightFactory = new();
         private ObjectFlyweightFactory ObjectFlyweightFactory = new();
+        private FloatRect drawingBounds;
         private TileState[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i mapSize = new(192, 192);//192
         private Vector2f size = new(192 * Tile.TileSize, 192 * Tile.TileSize);
         public List<Location> Locations { get { return locations; } }
         public List<Location> Transitions { get { return transitions; } }
+        public List<Object> DrawableObjects { get; }
         private void UpdateSize(Location location)
         {
             Vector2f deltaPosition = new(0, 0);
@@ -53,6 +55,7 @@ namespace CourseWork
         }
         public World()
         {
+            DrawableObjects = new();
             transitions = new();
             locations = new();
             tiles = new TileState[mapSize.Y, mapSize.X];
@@ -60,6 +63,7 @@ namespace CourseWork
             GenerateRooms(random);
             GenerateTransitions(random);
             GenerateTiles(random);
+            GenerateObjects();
             Player = new(locations.First());
             Player.TruePosition = locations.First().StartPosition + locations.First().TruePosition;
             darkness = new((Vector2f)Program.Window.Size);
@@ -117,6 +121,7 @@ namespace CourseWork
             }
             
         }
+        
         private void GenerateTiles(Random random)
         {
             foreach (Location location in locations)
@@ -135,6 +140,7 @@ namespace CourseWork
             {
                 IntRect bounds = location.IntBounds;
                 TileState[,] locationTiles = location.GenerateTiles(random);
+                
                 for (int i = 0; i < bounds.Height; i++)
                 {
                     for (int j = 0; j < bounds.Width; j++)
@@ -152,9 +158,16 @@ namespace CourseWork
                 {
                     if (tiles[i, j].Type == TileType.NONE)
                     {
-                        tiles[i, j] = new() { Type = TileType.GROUND, Id = (byte)random.Next(8), Brightness = 0.5f};
+                        tiles[i, j] = new() { Type = TileType.GROUND, Id = (byte)random.Next(4), Brightness = 0.5f};
                     }
                 }
+            }
+        }
+        private void GenerateObjects()
+        {
+            foreach (Location location in locations)
+            {
+                AddObjects(location.Objects);
             }
         }
         public void Update(int deltatime)
@@ -163,12 +176,16 @@ namespace CourseWork
             UpdatePosition();
             darkness.Position = -Position;
             UpdateDrawableObjects();
-            Compression = Player.TruePosition.Y / size.Y * 0.4f + 0.25f;
+            Compression = Player.TruePosition.Y / size.Y * 0.4f + 0.2f;
+            RemoveObject(Player);
+            AddObject(Player);
         }
         public virtual void UpdateDrawableObjects()
         {
             firstDrawingPoint = -Position;
             lastDrawingPoint = -Position + (Vector2f)Program.Window.Size;
+            drawingBounds = new(firstDrawingPoint.X, firstDrawingPoint.Y / Compression, lastDrawingPoint.X - firstDrawingPoint.X, (lastDrawingPoint.Y - firstDrawingPoint.Y) / Compression);
+
         }
         public void UpdatePosition()
         {
@@ -177,9 +194,9 @@ namespace CourseWork
             {
                 curPosition.X = topLeftPoint.X;
             }
-            if (curPosition.Y > topLeftPoint.Y)
+            if (curPosition.Y > topLeftPoint.Y + Program.Window.Size.Y / 2)
             {
-                curPosition.Y = topLeftPoint.Y;
+                curPosition.Y = topLeftPoint.Y + Program.Window.Size.Y / 2;
             }
             if (curPosition.X < Program.Window.Size.X - size.X)
             {
@@ -206,15 +223,34 @@ namespace CourseWork
                     tileFlyweightFactory.GetFlyweight(temp).Draw(temp, target, states);
                 }
             }
-            foreach(Location location in locations)
+            foreach (Object drawableObject in DrawableObjects)
             {
-                foreach(Object drawableObject in location.Objects)
+                if (drawableObject.Bounds.Intersects(drawingBounds))
                 {
                     drawableObject.Draw(target, states);
                 }
             }
-            Player.Draw(target,states);
             target.Draw(darkness, states);
+        }
+        public void AddObject(Object obj)
+        {
+            int index = 0;
+            while (index < DrawableObjects.Count && obj.CompareTo(DrawableObjects[index]) >= 1)
+            {
+                index++;
+            }
+            DrawableObjects.Insert(index, obj);
+        }
+        public void AddObjects(List<Object> objects)
+        {
+            foreach (Object obj in objects)
+            {
+                AddObject(obj);
+            }
+        }
+        public void RemoveObject(Object obj)
+        {
+            DrawableObjects.Remove(obj);
         }
     }
 }

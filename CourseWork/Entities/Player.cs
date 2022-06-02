@@ -18,7 +18,7 @@ namespace CourseWork.Entities
         public override FloatRect Bounds { get { return new(new Vector2f(TruePosition.X - Origin.X, TruePosition.Y - size.Z), new(size.X, size.Z)); } }
         public Player(Location location)
         {
-            MovementSpeed = 0.7f;
+            MovementSpeed = 0.4f;
             VisibilityRadius = 20;//20
             Origin = new(size.X / 2, size.Y);
             shape.FillColor = Color.Blue;
@@ -32,7 +32,9 @@ namespace CourseWork.Entities
         }
         public void Update(int deltaTime)
         {
+            prevPosition = new(TruePosition.X, TruePosition.Y);
             UpdateMove(deltaTime);
+            
             UpdateCollision();
             Position = new(TruePosition.X, TruePosition.Y * World.Compression);
         }
@@ -79,25 +81,51 @@ namespace CourseWork.Entities
                 }
             }
         }
-        private void UpdateCollision()
+        private Vector2f CheckCollisionFor(Location location)
         {
-            foreach (var collisionObject in Location.Objects)
+            Vector2f firstPositon = new(TruePosition.X, TruePosition.Y);
+            Vector2f result = firstPositon;
+            foreach (var collisionObject in location.Objects)
             {
                 if (Intersects(collisionObject))
                 {
                     Vector2f insidePosition = new(TruePosition.X, TruePosition.Y);
                     TruePosition = new(prevPosition.X, insidePosition.Y);
+                    result = TruePosition;
                     if (Intersects(collisionObject))
                     {
                         TruePosition = new(insidePosition.X, prevPosition.Y);
+                        result = TruePosition;
                         if (Intersects(collisionObject))
                         {
-                            TruePosition = prevPosition;
+                            result = prevPosition;
                         }
                     }
                 }
             }
-            prevPosition = TruePosition;
+            TruePosition = firstPositon;
+            return result;
+        }
+        private void UpdateCollision()
+        {
+            Vector2f locationPosition = CheckCollisionFor(Location);
+
+            if(locationPosition == TruePosition)
+            {
+                foreach (Location location in Location.ConnectedLocations)
+                {
+                    locationPosition = CheckCollisionFor(location);
+                    if (locationPosition != TruePosition)
+                    {
+                        TruePosition = locationPosition;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                TruePosition = locationPosition;
+            }
         }
     }
 }

@@ -42,18 +42,6 @@ namespace CourseWork
         {
             connectedLocations.Add(location);
         }
-        public void AddObject(Object obj)
-        {
-            int index = 0;
-            while (index < Objects.Count && obj.CompareTo(Objects[index]) >= 1)
-            {
-                index++;
-            }
-            Objects.Insert(index, obj);
-        }
-        public void RemoveObject(Object obj)
-        {
-            Objects.Remove(obj);
-        }
+        
     }
 }

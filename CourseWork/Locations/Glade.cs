@@ -22,7 +22,7 @@ namespace CourseWork.Locations
                 TruePosition = new(3 * Tile.TileSize, 3 * Tile.TileSize)
             };
             obj.TruePosition += TruePosition;
-            AddObject(obj);
+            Objects.Add(obj);
             
             size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize);
             StartPosition = new Vector2f(15 * Tile.TileSize, 15 * Tile.TileSize);

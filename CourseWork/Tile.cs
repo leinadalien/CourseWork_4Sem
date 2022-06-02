@@ -44,12 +44,14 @@ namespace CourseWork
             type = state.Type;
             id = state.Id;
             brightness = state.Brightness;
-            shape = new(new Vector2f(TileSize, TileSize));
+            shape = new(new Vector2f(TileSize, TileSize * 1.5f));
             switch (type)
             {
                 case TileType.GROUND:
+                    shape.Origin = new(0, 16);
                     shape.Texture = Content.GrassTexture;
-                    shape.TextureRect = new IntRect(id * 32, 0, 32, 32);                
+                    shape.TextureRect = new IntRect(id * 32, 0, 32, 48);
+                    
                     break;
                 case TileType.TRAIL:
                     color = new(255, 255, 128);
@@ -61,15 +63,6 @@ namespace CourseWork
                     break;
             }
             shape.FillColor = color;
-        }
-        public void UpdateShadow(double value)//NOT USED
-        {
-            value = 1 - value;
-            if (value < 0) value = 0;
-            if (value > 0.6) value = 0.6;
-            value /= 0.6;
-            byte bValue = (byte)(value * 255);
-            shape.FillColor = new Color(bValue, bValue, bValue);
         }
         public void Draw(RenderTarget target, RenderStates states)
         {
