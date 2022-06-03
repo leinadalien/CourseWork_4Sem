@@ -144,9 +144,21 @@ namespace CourseWork
                 {
                     for (int j = 0; j < bounds.Width; j++)
                     {
-                       
-                        tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
-
+                        if (tiles[i + bounds.Top, j + bounds.Left] != null)
+                        {
+                            if (locationTiles[i, j].Type == TileType.TRAIL)
+                            {
+                                tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
+                            }
+                            else if (tiles[i + bounds.Top, j + bounds.Left].Type == locationTiles[i, j].Type && tiles[i + bounds.Top, j + bounds.Left].Rotation != locationTiles[i, j].Rotation)
+                            {
+                                tiles[i + bounds.Top, j + bounds.Left] = new(new() { Type = TileType.TRAIL });
+                            }
+                        }
+                        else
+                        {
+                            tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
+                        }
 
                     }
                 }
@@ -157,7 +169,7 @@ namespace CourseWork
                 {
                     if (tiles[i, j] == null)
                     {
-                        tiles[i, j] = new( new() { Type = TileType.GROUND, Id = (byte)random.Next(4), Brightness = 0.64f + (float)random.NextDouble() * 0.08f });
+                        tiles[i, j] = new( new() { Type = TileType.GROUND });
                     }
                 }
             }
@@ -214,7 +226,8 @@ namespace CourseWork
                 for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j <= (int)lastDrawingPoint.X / Tile.TileSize; j++)
                 {
                     if (i < 0 || j < 0 || i >= mapSize.Y || j >= mapSize.X) continue;
-                    tiles[i, j].Position = new(j * Tile.TileSize, i * Tile.TileSize * Compression);
+                    tiles[i, j].Position = new(j * Tile.TileSize, (i * Tile.TileSize * Compression));
+                    tiles[i, j].Scale = new(1, Compression);
                     tiles[i, j].Draw(target, states);
                 }
             }

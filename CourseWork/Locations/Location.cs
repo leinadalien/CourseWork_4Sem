@@ -33,8 +33,50 @@ namespace CourseWork
             {
                 for (int j = 0; j < TileCount.X; j++)
                 {
-                   
-                    tiles[i, j] = new(new() { Type = TileType.GROUND, Id = (byte)random.Next(8) });
+                    if (i == 0)
+                    {
+                        if (j == 0)
+                        {
+                            tiles[i, j] = new(new() { Type = TileType.TRAIL_INTERNAL_CORNER});
+                        }
+                        else if (j == TileCount.X - 1)
+                        {
+                            tiles[i, j] = new(new() { Type = TileType.TRAIL_INTERNAL_CORNER, Rotation = 90 });
+                        }
+                        else
+                        {
+                            tiles[i, j] = new(new() { Type = TileType.TRAIL_SIDE});
+                        }
+                    } else if (i == TileCount.Y - 1)
+                    {
+                        if (j == 0)
+                        {
+                            tiles[i, j] = new(new() { Type = TileType.TRAIL_INTERNAL_CORNER, Rotation = 270 });
+                        }
+                        else if (j == TileCount.X - 1)
+                        {
+                            tiles[i, j] = new(new() { Type = TileType.TRAIL_INTERNAL_CORNER, Rotation = 180 });
+                        }
+                        else
+                        {
+                            tiles[i, j] = new(new() { Type = TileType.TRAIL_SIDE, Rotation = 180});
+                        }
+                    }
+                    else
+                    {
+                        if (j == 0)
+                        {
+                            tiles[i, j] = new(new() { Type = TileType.TRAIL_SIDE, Rotation = 270 });
+                        }
+                        else if (j == TileCount.X - 1)
+                        {
+                            tiles[i, j] = new(new() { Type = TileType.TRAIL_SIDE, Rotation = 90 });
+                        }
+                        else
+                        {
+                            tiles[i, j] = new(new() { Type = TileType.TRAIL});
+                        }
+                    }
                 }
             }
             return tiles;

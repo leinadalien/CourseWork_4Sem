@@ -12,10 +12,10 @@ namespace CourseWork.Objects
     {
         public Stone(int id)
         {
-            size = new(Tile.TileSize * 2, Tile.TileSize * 2, Tile.TileSize * 2);
+            size = new(Tile.TileSize, Tile.TileSize, Tile.TileSize);
             shape.Size = new(Width, Height);
             Origin = new(0, size.Y);
-            shape.Texture = Content.StoneTexture;
+            shape.Texture = Content.TilesTexture;
             shape.TextureRect = new IntRect(id * 48, 0, 48, 48);
         }
 
