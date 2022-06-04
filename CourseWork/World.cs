@@ -144,22 +144,40 @@ namespace CourseWork
                 {
                     for (int j = 0; j < bounds.Width; j++)
                     {
-                        if (tiles[i + bounds.Top, j + bounds.Left] != null)
+                        Tile worldTile = tiles[i + bounds.Top, j + bounds.Left];
+                        Tile locationTile = locationTiles[i, j];
+                        if (worldTile != null)
                         {
-                            if (locationTiles[i, j].Type == TileType.TRAIL)
+                            if (locationTile.Type == TileType.TRAIL || worldTile.Type == TileType.TRAIL)
                             {
-                                tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
+                                worldTile = new(new() { Type = TileType.TRAIL });
                             }
-                            else if (tiles[i + bounds.Top, j + bounds.Left].Type == locationTiles[i, j].Type && tiles[i + bounds.Top, j + bounds.Left].Rotation != locationTiles[i, j].Rotation)
+                            else if (worldTile.Type == TileType.TRAIL_SIDE && locationTile.Type == TileType.TRAIL_SIDE && locationTile.SpriteRotation != worldTile.SpriteRotation)
                             {
-                                tiles[i + bounds.Top, j + bounds.Left] = new(new() { Type = TileType.TRAIL });
+                                if (Math.Abs(locationTile.SpriteRotation - worldTile.SpriteRotation) != 180)
+                                {
+                                    float rotation;
+                                    rotation = Math.Max(locationTile.SpriteRotation, worldTile.SpriteRotation);
+                                    if (Math.Abs(locationTile.SpriteRotation - worldTile.SpriteRotation) >= 270)
+                                    {
+                                        rotation += 90;
+                                    }
+                                    worldTile = new(new() { Type = TileType.TRAIL_EXTERNAL_CORNER, Rotation = rotation });
+                                } else
+                                {
+                                    worldTile = new(new() { Type = TileType.TRAIL });
+                                }
+                            }
+                            else if (locationTile.Type == TileType.TRAIL_SIDE && worldTile.Type == TileType.TRAIL_INTERNAL_CORNER)
+                            {
+                                worldTile = locationTile;
                             }
                         }
                         else
                         {
-                            tiles[i + bounds.Top, j + bounds.Left] = locationTiles[i, j];
+                            worldTile = locationTile;
                         }
-
+                        tiles[i + bounds.Top, j + bounds.Left] = worldTile;
                     }
                 }
             }
@@ -195,7 +213,7 @@ namespace CourseWork
         {
             firstDrawingPoint = -Position;
             lastDrawingPoint = -Position + (Vector2f)Program.Window.Size;
-            drawingBounds = new(firstDrawingPoint.X, firstDrawingPoint.Y / Compression, lastDrawingPoint.X - firstDrawingPoint.X, (lastDrawingPoint.Y - firstDrawingPoint.Y) / Compression);
+            drawingBounds = new(firstDrawingPoint, lastDrawingPoint - firstDrawingPoint);
         }
         public void UpdatePosition()
         {
@@ -226,14 +244,17 @@ namespace CourseWork
                 for (int j = (int)firstDrawingPoint.X / Tile.TileSize; j <= (int)lastDrawingPoint.X / Tile.TileSize; j++)
                 {
                     if (i < 0 || j < 0 || i >= mapSize.Y || j >= mapSize.X) continue;
-                    tiles[i, j].Position = new(j * Tile.TileSize, (i * Tile.TileSize * Compression));
+                    tiles[i, j].Position = new(j * Tile.TileSize, (int)(i * Tile.TileSize * Compression));
                     tiles[i, j].Scale = new(1, Compression);
                     tiles[i, j].Draw(target, states);
                 }
             }
             foreach (Object drawableObject in DrawableObjects)
             {
-                if (drawableObject.Bounds.Intersects(drawingBounds))
+                FloatRect objectDrawableBounds = drawableObject.DrawableBounds;/*
+                objectDrawableBounds.Left += Position.X;
+                objectDrawableBounds.Top += Position.Y;*/
+                if (objectDrawableBounds.Intersects(drawingBounds))
                 {
                     drawableObject.Draw(target, states);
                 }

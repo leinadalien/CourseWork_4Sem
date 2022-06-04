@@ -21,14 +21,14 @@ namespace CourseWork.Entities
             MovementSpeed = 0.4f;
             VisibilityRadius = 20;//20
             Origin = new(size.X / 2, size.Y);
-            shape.FillColor = Color.Blue;
+            sprite.Position = new(0, 48);// FOR DEBUG
             Location = location;
             prevPosition = TruePosition;
         }
         public override void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
-            target.Draw(shape, states);
+            target.Draw(sprite, states);
         }
         public void Update(int deltaTime)
         {

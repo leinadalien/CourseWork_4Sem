@@ -27,9 +27,8 @@ namespace CourseWork.Locations
         {
             var obj = new Stone(random.Next(4))
             {
-                TruePosition = new(3 * Tile.TileSize, 3 * Tile.TileSize)
+                TruePosition = new Vector2f(3 * Tile.TileSize, 3 * Tile.TileSize) + TruePosition
             };
-            obj.TruePosition += TruePosition;
             Objects.Add(obj);
             return Objects;
         }

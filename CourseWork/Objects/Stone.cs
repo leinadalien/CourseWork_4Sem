@@ -13,10 +13,9 @@ namespace CourseWork.Objects
         public Stone(int id)
         {
             size = new(Tile.TileSize, Tile.TileSize, Tile.TileSize);
-            shape.Size = new(Width, Height);
             Origin = new(0, size.Y);
-            shape.Texture = Content.TilesTexture;
-            shape.TextureRect = new IntRect(id * 48, 0, 48, 48);
+            sprite.Texture = Content.ObjectsTexture;
+            sprite.TextureRect = new IntRect(id * (int)size.X, 0, (int)size.X, (int)size.Y);
         }
 
         public override FloatRect Bounds {get { return new(new Vector2f(TruePosition.X, TruePosition.Y - size.Z), new(size.X, size.Y)); } }

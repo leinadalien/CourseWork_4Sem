@@ -14,11 +14,11 @@ namespace CourseWork.Locations
         {
             connectedLocations = new();
             IntBounds = bounds;
-            shape.FillColor = new(0, 255, 255, 120);
+            sprite.Color = new(0, 255, 255, 120);
             TileCount = new(bounds.Width, bounds.Height);
             TruePosition = new(bounds.Left * Tile.TileSize, bounds.Top * Tile.TileSize);
             size = new(TileCount.X * Tile.TileSize, 0, TileCount.Y * Tile.TileSize);
-            shape.Size = new(size.X,size.Z);
+            sprite.TextureRect = new(0,0,(int)size.X,(int)size.Z);
         }
 
         public override List<Object> GenerateObjects(Random random)

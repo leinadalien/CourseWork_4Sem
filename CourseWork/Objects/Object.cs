@@ -11,23 +11,25 @@ namespace CourseWork
 {
     public abstract class Object : Transformable, Drawable, IComparable<Object>
     {
-        protected RectangleShape shape;
+        protected Sprite sprite;
         protected Vector3f size;
-        public Vector2f TruePosition;
+        public Vector2f TruePosition { get; set; }
+        public FloatRect DrawableBounds { get { return new( new(TruePosition.X - Origin.X, TruePosition.Y * World.Compression - Origin.Y), new(size.X, size.Y)); } }
         public float Thickness { get { return size.Z; } set { size.Z = value; } }
         public float Width { get { return size.X; } set { size.X = value; } }
         public float Height { get { return size.Y; } set { size.Y = value; } }
         public abstract FloatRect Bounds { get; }
         protected Object()
         {
-            shape = new(new Vector2f(Tile.TileSize,Tile.TileSize));
-            size = new(shape.Size.X, shape.Size.Y, Tile.TileSize);
+            sprite = new(Content.ObjectsTexture);
+            size = new(Tile.TileSize, Tile.TileSize, Tile.TileSize);
+            sprite.TextureRect = new(0, 0, (int)size.X, (int)size.Y);
         }
         public virtual void Draw(RenderTarget target, RenderStates states)
         {
             Position = new(TruePosition.X, TruePosition.Y * World.Compression);
             states.Transform *= Transform;
-            target.Draw(shape, states);
+            target.Draw(sprite, states);
         }
         public virtual bool Intersects(Object other)
         {
@@ -48,9 +50,9 @@ namespace CourseWork
         }
         public override int GetHashCode()
         {
-            int result = shape.TextureRect.GetHashCode();
-            result = 31 * result + shape.Texture.NativeHandle.GetHashCode();
-            result = 31 * result + shape.Texture.Size.GetHashCode();
+            int result = sprite.TextureRect.GetHashCode();
+            result = 31 * result + sprite.Texture.NativeHandle.GetHashCode();
+            result = 31 * result + sprite.Texture.Size.GetHashCode();
             return result;
         }
     }
