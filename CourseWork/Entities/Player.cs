@@ -18,10 +18,9 @@ namespace CourseWork.Entities
         public override FloatRect Bounds { get { return new(new Vector2f(TruePosition.X - Origin.X, TruePosition.Y - size.Z), new(size.X, size.Z)); } }
         public Player(Location location)
         {
-            MovementSpeed = 0.4f;
+            MovementSpeed = 1f;
             VisibilityRadius = 20;//20
             Origin = new(size.X / 2, size.Y);
-            sprite.Position = new(0, 48);// FOR DEBUG
             Location = location;
             prevPosition = TruePosition;
         }

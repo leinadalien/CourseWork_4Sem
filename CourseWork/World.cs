@@ -25,8 +25,9 @@ namespace CourseWork
         private FloatRect drawingBounds;
         private Tile[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
+        private Vector2i extraSpace = new(5, 30);
         private Vector2i mapSize = new(192, 192);//192
-        private Vector2f size = new(192 * Tile.TileSize, 192 * Tile.TileSize);
+        private Vector2f size;
         public List<Location> Locations { get { return locations; } }
         public List<Location> Transitions { get { return transitions; } }
         public List<Object> DrawableObjects { get; }
@@ -54,11 +55,12 @@ namespace CourseWork
         }
         public World()
         {
+            size = new(mapSize.X * Tile.TileSize, mapSize.Y * Tile.TileSize);
             DrawableObjects = new();
             transitions = new();
             locations = new();
             tiles = new Tile[mapSize.Y, mapSize.X];
-            Random random = new(1);
+            Random random = new(3);
             GenerateRooms(random);
             GenerateTransitions(random);
             GenerateTiles(random);
@@ -71,7 +73,7 @@ namespace CourseWork
         
         private void GenerateRooms(Random random)
         {
-            Map root = new(new(new(0,0), mapSize));
+            Map root = new(new(new(extraSpace.X,extraSpace.Y), mapSize - extraSpace * 2));
             root.Split(random);
             List<IntRect> locationsBounds = root.GetRooms();
             foreach (IntRect locationBounds in locationsBounds)
@@ -181,13 +183,25 @@ namespace CourseWork
                     }
                 }
             }
-            for (int i = 0; i < mapSize.X; i++)
+            for (int i = 0; i < mapSize.Y; i++)
             {
-                for (int j = 0; j < mapSize.Y; j++)
+                for (int j = 0; j < mapSize.X; j++)
                 {
                     if (tiles[i, j] == null)
                     {
                         tiles[i, j] = new( new() { Type = TileType.GROUND });
+                        double randomObject = random.NextDouble();
+                        if (randomObject > 0.9)
+                        {
+                            AddObject(new Stone(random.Next(4)) { TruePosition = new(j * Tile.TileSize, (i + 1) * Tile.TileSize)});
+                        } else if (randomObject > 0.8)
+                        {
+                            AddObject(new HighTree(random.Next(4)) { TruePosition = new(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2), Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
+                        }
+                        else if (randomObject > 0.78)
+                        {
+                            AddObject(new FatTree(random.Next(2)) { TruePosition = new(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2), Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
+                        }
                     }
                 }
             }
@@ -202,10 +216,12 @@ namespace CourseWork
         public void Update(int deltatime)
         {
             Player.Update(deltatime);
+
+            size.Y = mapSize.Y * Tile.TileSize;
             UpdatePosition();
             darkness.Position = -Position;
             UpdateDrawableObjects();
-            Compression = Player.TruePosition.Y / size.Y * 0.4f + 0.2f;
+            Compression = (Player.TruePosition.Y / (mapSize.Y * Tile.TileSize) - 0.5f) * 0.4f + 0.4f;
             RemoveObject(Player);
             AddObject(Player);
         }
@@ -222,9 +238,9 @@ namespace CourseWork
             {
                 curPosition.X = topLeftPoint.X;
             }
-            if (curPosition.Y > topLeftPoint.Y + Program.Window.Size.Y / 2)
+            if (curPosition.Y > topLeftPoint.Y)
             {
-                curPosition.Y = topLeftPoint.Y + Program.Window.Size.Y / 2;
+                curPosition.Y = topLeftPoint.Y;
             }
             if (curPosition.X < Program.Window.Size.X - size.X)
             {
@@ -251,10 +267,7 @@ namespace CourseWork
             }
             foreach (Object drawableObject in DrawableObjects)
             {
-                FloatRect objectDrawableBounds = drawableObject.DrawableBounds;/*
-                objectDrawableBounds.Left += Position.X;
-                objectDrawableBounds.Top += Position.Y;*/
-                if (objectDrawableBounds.Intersects(drawingBounds))
+                if (drawableObject.DrawableBounds.Intersects(drawingBounds))
                 {
                     drawableObject.Draw(target, states);
                 }

@@ -13,7 +13,18 @@ namespace CourseWork
     {
         protected Sprite sprite;
         protected Vector3f size;
+        protected float brightness;
         public Vector2f TruePosition { get; set; }
+        public float Brightness
+        {
+            get { return brightness; }
+            set
+            {
+                brightness = value;
+                byte br = (byte)(brightness * 256);
+                sprite.Color = new(br,br,br);
+            }
+        }
         public FloatRect DrawableBounds { get { return new( new(TruePosition.X - Origin.X, TruePosition.Y * World.Compression - Origin.Y), new(size.X, size.Y)); } }
         public float Thickness { get { return size.Z; } set { size.Z = value; } }
         public float Width { get { return size.X; } set { size.X = value; } }
@@ -21,7 +32,7 @@ namespace CourseWork
         public abstract FloatRect Bounds { get; }
         protected Object()
         {
-            sprite = new(Content.ObjectsTexture);
+            sprite = new(Content.StonesTexture);
             size = new(Tile.TileSize, Tile.TileSize, Tile.TileSize);
             sprite.TextureRect = new(0, 0, (int)size.X, (int)size.Y);
         }
@@ -35,7 +46,6 @@ namespace CourseWork
         {
             return Bounds.Intersects(other.Bounds);
         }
-
         public int CompareTo(Object? other)
         {
             int result = TruePosition.Y.CompareTo(other?.TruePosition.Y);

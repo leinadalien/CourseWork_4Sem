@@ -8,17 +8,16 @@ using System.Threading.Tasks;
 
 namespace CourseWork.Objects
 {
-    public class Stone : Object
+    public class HighTree : Object
     {
-        public Stone(int id)
+        public HighTree(int id)
         {
             id %= 4;
-            size = new(Tile.TileSize, Tile.TileSize, Tile.TileSize);
+            size = new(Tile.TileSize, Tile.TileSize * 4, Tile.TileSize);
             Origin = new(0, size.Y);
-            sprite.Texture = Content.StonesTexture;
+            sprite.Texture = Content.HighTreesTexture;
             sprite.TextureRect = new IntRect(id * (int)size.X, 0, (int)size.X, (int)size.Y);
         }
-
-        public override FloatRect Bounds {get { return new(new Vector2f(TruePosition.X, TruePosition.Y - size.Z), new(size.X, size.Z)); } }
+        public override FloatRect Bounds { get { return new(new Vector2f(TruePosition.X + Tile.TileSize / 4, TruePosition.Y - size.Z), new(size.X / 2, size.Z / 2)); } }
     }
 }

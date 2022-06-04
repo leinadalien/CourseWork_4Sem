@@ -30,6 +30,7 @@ namespace CourseWork.Locations
                 TruePosition = new Vector2f(3 * Tile.TileSize, 3 * Tile.TileSize) + TruePosition
             };
             Objects.Add(obj);
+            Objects.Add(new HighTree(random.Next(4)) { TruePosition = new Vector2f(5 * Tile.TileSize, 5 * Tile.TileSize) + TruePosition });
             return Objects;
         }
     }
