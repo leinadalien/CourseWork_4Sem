@@ -11,6 +11,7 @@ namespace CourseWork.Entities
 {
     public class Player : Entity
     {
+        private Animator animator;
         public float MovementSpeed = 0.15f;
         public Vector2f Movement;
         private Vector2f prevPosition;
@@ -18,23 +19,38 @@ namespace CourseWork.Entities
         public override FloatRect Bounds { get { return new(new Vector2f(TruePosition.X - Origin.X, TruePosition.Y - size.Z), new(size.X, size.Z)); } }
         public Player(Location location)
         {
+            size = new(Tile.TileSize, Tile.TileSize * 2, Tile.TileSize);
+            sprite.Texture = Content.PlayerTexture;
             MovementSpeed = 1f;
             VisibilityRadius = 20;//20
             Origin = new(size.X / 2, size.Y);
             Location = location;
             prevPosition = TruePosition;
+            animator = new(3, sprite, 0.03f, MovementSpeed);
+            animator.Idle();
         }
         public override void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;
             target.Draw(sprite, states);
         }
+        public void Animate(int deltaTime)
+        {
+            if (Movement.X != 0 || Movement.Y != 0)
+            {
+                animator.Walk(deltaTime, Movement);
+            }
+            else
+            {
+                animator.Idle();
+            }
+        }
         public void Update(int deltaTime)
         {
             prevPosition = new(TruePosition.X, TruePosition.Y);
             UpdateMove(deltaTime);
-            
             UpdateCollision();
+            Animate(deltaTime);
             Position = new(TruePosition.X, TruePosition.Y * World.Compression);
         }
         private Vector2f CheckBoundsFor(Location location)

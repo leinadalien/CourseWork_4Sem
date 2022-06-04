@@ -9,6 +9,8 @@ namespace CourseWork
         public static Texture StonesTexture = new(DIRECTORY + "stones.png");
         public static Texture HighTreesTexture = new(DIRECTORY + "high_trees.png");
         public static Texture FatTreesTexture = new(DIRECTORY + "fat_trees.png");
+        public static Texture GrassTexture = new(DIRECTORY + "grass.png");
         public static Texture DarknessTexture = new(DIRECTORY + "darkness.png");
+        public static Texture PlayerTexture = new(DIRECTORY + "player.png");
     }
 }

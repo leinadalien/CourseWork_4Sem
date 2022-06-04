@@ -190,24 +190,68 @@ namespace CourseWork
                     if (tiles[i, j] == null)
                     {
                         tiles[i, j] = new( new() { Type = TileType.GROUND });
-                        double randomObject = random.NextDouble();
-                        if (randomObject > 0.9)
-                        {
-                            AddObject(new Stone(random.Next(4)) { TruePosition = new(j * Tile.TileSize, (i + 1) * Tile.TileSize)});
-                        } else if (randomObject > 0.8)
-                        {
-                            AddObject(new HighTree(random.Next(4)) { TruePosition = new(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2), Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
-                        }
-                        else if (randomObject > 0.78)
-                        {
-                            AddObject(new FatTree(random.Next(2)) { TruePosition = new(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2), Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
-                        }
                     }
                 }
             }
         }
         private void GenerateObjects(Random random)
         {
+            for (int i = 0; i < mapSize.Y; i++)
+            {
+                for (int j = 0; j < mapSize.X; j++)
+                {
+                    
+                    if (tiles[i, j].Type == TileType.GROUND)
+                    {
+                        double randomObject = random.NextDouble();
+                        bool isBound = false;
+                        for (int a = i - 1; a < i + 2; a++)
+                        {
+                            for (int b = j - 1; b < j + 2; b++)
+                            {
+                                if (a >= 0 && b >= 0 && a < mapSize.Y && b < mapSize.X)
+                                {
+                                    if (tiles[a, b].Type == TileType.TRAIL_SIDE)
+                                    {
+                                        isBound = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (isBound)
+                        {
+                            if (randomObject < 0.5)
+                            {
+                                AddObject(new Stone(random.Next(4)) { TruePosition = new(j * Tile.TileSize, (i + 1) * Tile.TileSize) });
+                            }
+                            else
+                            {
+                                AddObject(new HighTree(random.Next(4)) { TruePosition = new(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2), Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
+                            }
+                        }
+                        else
+                        {
+                            if (randomObject > 0.9)
+                            {
+                                AddObject(new Stone(random.Next(4)) { TruePosition = new(j * Tile.TileSize, (i + 1) * Tile.TileSize) });
+                            }
+                            else if (randomObject > 0.8)
+                            {
+                                AddObject(new HighTree(random.Next(4)) { TruePosition = new(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2), Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
+                            }
+                            else if (randomObject > 0.78)
+                            {
+                                AddObject(new FatTree(random.Next(2)) { TruePosition = new(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2), Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
+                            }
+                            else if (randomObject > 0.7)
+                            {
+                                AddObject(new Grass(random.Next(4)) { TruePosition = new(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2), Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
+                            }
+                        }
+                    }
+                    
+                }
+            }
             foreach (Location location in locations)
             {
                 AddObjects(location.GenerateObjects(random));

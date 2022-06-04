@@ -18,6 +18,6 @@ namespace CourseWork.Objects
             sprite.Texture = Content.FatTreesTexture;
             sprite.TextureRect = new IntRect(id * (int)size.X, 0, (int)size.X, (int)size.Y);
         }
-        public override FloatRect Bounds { get { return new(new Vector2f(TruePosition.X, TruePosition.Y - size.Z), new(size.X, size.Z)); } }
+        public override FloatRect Bounds { get { return new(new Vector2f(TruePosition.X, TruePosition.Y - size.Z), new(Tile.TileSize, size.Z)); } }
     }
 }
