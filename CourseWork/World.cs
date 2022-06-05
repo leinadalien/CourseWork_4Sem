@@ -1,5 +1,4 @@
 ﻿using CourseWork.Entities;
-using CourseWork.Flyweights;
 using CourseWork.Locations;
 using CourseWork.Objects;
 using SFML.Graphics;
@@ -21,7 +20,6 @@ namespace CourseWork
         protected Vector2f lastDrawingPoint;
         private RectangleShape darkness;
         public Player Player;
-        private ObjectFlyweightFactory ObjectFlyweightFactory = new();
         private FloatRect drawingBounds;
         private Tile[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
@@ -53,14 +51,14 @@ namespace CourseWork
                 size.Y = location.Position.Y + location.Thickness - Position.Y;
             }
         }
-        public World()
+        public World(int seed)
         {
             size = new(mapSize.X * Tile.TileSize, mapSize.Y * Tile.TileSize);
             DrawableObjects = new();
             transitions = new();
             locations = new();
             tiles = new Tile[mapSize.Y, mapSize.X];
-            Random random = new(3);
+            Random random = new(seed);
             GenerateRooms(random);
             GenerateTransitions(random);
             GenerateTiles(random);
@@ -265,7 +263,7 @@ namespace CourseWork
             UpdatePosition();
             darkness.Position = -Position;
             UpdateDrawableObjects();
-            Compression = (Player.TruePosition.Y / (mapSize.Y * Tile.TileSize) - 0.5f) * 0.4f + 0.4f;
+            Compression = (Player.TruePosition.Y / (mapSize.Y * Tile.TileSize) - 0.5f) * 0.3f + 0.3f;
             RemoveObject(Player);
             AddObject(Player);
         }

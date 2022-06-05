@@ -1,43 +1,43 @@
-﻿using SFML.System;
+﻿using CourseWork.GUI;
+using SFML.System;
 using SFML.Window;
+using SFML.Graphics;
 
 namespace CourseWork
 {
     public class Game
     {
-        public EventHandler<KeyEventArgs> KeyPressed;
-        public EventHandler<KeyEventArgs> KeyReleased;
+        public bool Pause = false;
+        public EventHandler<KeyEventArgs> KeyPressed { get; }
+        public EventHandler<KeyEventArgs> KeyReleased {  get; }
         private World world;
         private Clock clock;
-        private GameSettings settings = new GameSettings()
-        {
-            AspectRatio = (16, 9),
-            TileSize = 32,
-        };
-        public GameSettings Settings { get { return settings; } set { settings = value; } }
-        public Game()
+        public Game(int seed)
         {
             KeyPressed = MovePlayer;
             KeyReleased = MovementKeyReleased;
-            world = new();
+            KeyReleased += EscapeReleased;
+            world = new(seed);
             clock = new Clock();
         }
         public void Update()
         {
-            world.Update(clock.ElapsedTime.AsMilliseconds());
-            //Game stats
-            Console.SetCursorPosition(0, 0);
-            Console.WriteLine($"Player map position: X({(int)world.Player.TruePosition.X}) Y({(int)world.Player.TruePosition.Y}) [{(int)world.Player.TruePosition.X / Tile.TileSize}][{(int)world.Player.TruePosition.Y / Tile.TileSize}]          ");
-            Console.WriteLine($"Player Camera position: X({(int)(world.Player.Position.X + world.Position.X)}) Y({(int)(world.Player.Position.Y + world.Position.Y)})          ");
+            if (!Pause)
+            {
+                world.Update(clock.ElapsedTime.AsMilliseconds());
+                //Game stats
+                Console.SetCursorPosition(0, 0);
+                Console.WriteLine($"Player map position: X({(int)world.Player.TruePosition.X}) Y({(int)world.Player.TruePosition.Y}) [{(int)world.Player.TruePosition.X / Tile.TileSize}][{(int)world.Player.TruePosition.Y / Tile.TileSize}]          ");
+                Console.WriteLine($"Player Camera position: X({(int)(world.Player.Position.X + world.Position.X)}) Y({(int)(world.Player.Position.Y + world.Position.Y)})          ");
 
-            Console.WriteLine($"Camera position: X({-(int)world.Position.X}) Y({-(int)world.Position.Y})      ");
-            Console.WriteLine($"Camera X: [{0 - (int)world.Position.X / Tile.TileSize},{Program.Window.Size.X / Tile.TileSize + 1 - (int)world.Position.X / Tile.TileSize}]    ");
-            Console.WriteLine($"Camera Y: [{0 - (int)world.Position.Y / Tile.TileSize},{Program.Window.Size.Y / Tile.TileSize + 1 - (int)world.Position.Y / Tile.TileSize}]    ");
-            Console.WriteLine((1000 / (clock.ElapsedTime.AsMilliseconds() + 1)) + "fps  ");
-            Console.WriteLine($"World compression: {World.Compression}");
-            
-            clock.Restart();
-            
+                Console.WriteLine($"Camera position: X({-(int)world.Position.X}) Y({-(int)world.Position.Y})      ");
+                Console.WriteLine($"Camera X: [{0 - (int)world.Position.X / Tile.TileSize},{Program.Window.Size.X / Tile.TileSize + 1 - (int)world.Position.X / Tile.TileSize}]    ");
+                Console.WriteLine($"Camera Y: [{0 - (int)world.Position.Y / Tile.TileSize},{Program.Window.Size.Y / Tile.TileSize + 1 - (int)world.Position.Y / Tile.TileSize}]    ");
+                Console.WriteLine((1000 / (clock.ElapsedTime.AsMilliseconds() + 1)) + "fps  ");
+                Console.WriteLine($"World compression: {World.Compression}");
+
+                clock.Restart();
+            }
         }
         public void Draw()
         {
@@ -111,10 +111,12 @@ namespace CourseWork
                     break;
             }
         }
-    }
-    public struct GameSettings
-    {
-        public (int, int) AspectRatio { get; set; }
-        public int TileSize { get; set; }
+        private void EscapeReleased(object? sender, KeyEventArgs e)
+        {
+            if (e.Code == Keyboard.Key.Escape)
+            {
+                Pause = !Pause;
+            }
+        }
     }
 }

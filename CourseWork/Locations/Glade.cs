@@ -24,7 +24,7 @@ namespace CourseWork.Locations
         }
 
         public override List<Object> GenerateObjects(Random random)
-        {
+        {/*
             for (int i = 0; i < TileCount.Y; i++)
             {
                 for (int j = 0; j < TileCount.X; j++)
@@ -50,13 +50,9 @@ namespace CourseWork.Locations
                         }
                     }
                 }
-            }
-            var obj = new Stone(random.Next(4))
-            {
-                TruePosition = new Vector2f(3 * Tile.TileSize, 3 * Tile.TileSize) + TruePosition
-            };
-            Objects.Add(obj);
-            Objects.Add(new HighTree(random.Next(4)) { TruePosition = new Vector2f(5 * Tile.TileSize, 5 * Tile.TileSize) + TruePosition });
+            }*/
+            
+            Objects.Add(new House() { TruePosition = new Vector2f(5 * Tile.TileSize, 5 * Tile.TileSize) + TruePosition });
             return Objects;
         }
     }

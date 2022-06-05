@@ -51,7 +51,6 @@ namespace CourseWork
             sprite.Position = new(48/2,48/2);
             sprite.TextureRect = new IntRect(2 + (byte)type * 48, 2, 44, 44);
             Brightness = state.Brightness;
-            //sprite.FillColor = new((byte)(color.R * brightness), (byte)(color.G * brightness), (byte)(color.B * brightness));
         }
         public void Draw(RenderTarget target, RenderStates states)
         {

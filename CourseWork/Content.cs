@@ -12,5 +12,8 @@ namespace CourseWork
         public static Texture GrassTexture = new(DIRECTORY + "grass.png");
         public static Texture DarknessTexture = new(DIRECTORY + "darkness.png");
         public static Texture PlayerTexture = new(DIRECTORY + "player.png");
+        public static Texture KeyTexture = new(DIRECTORY + "key.png");
+        public static Texture HouseTexture = new(DIRECTORY + "house.png");
+        public static Font Font = new(DIRECTORY + "font.ttf");
     }
 }

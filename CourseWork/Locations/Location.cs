@@ -1,7 +1,4 @@
-﻿using CourseWork.Flyweights;
-using CourseWork.Locations;
-using CourseWork.Objects;
-using SFML.Graphics;
+﻿using SFML.Graphics;
 using SFML.System;
 
 namespace CourseWork
