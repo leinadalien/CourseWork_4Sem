@@ -13,6 +13,7 @@ namespace CourseWork
         public EventHandler<MouseMoveEventArgs> MouseMove { get; set; }
         public EventHandler<MouseButtonEventArgs> MouseClick { get; set; }
         public EventHandler PauseHandler { get; set; }
+        public EventHandler PlayerDeadHandler { get; set; }
         private World world;
         private Clock clock;
         public Game(int seed)
@@ -20,7 +21,8 @@ namespace CourseWork
             KeyPressed = MovePlayer;
             KeyReleased = MovementKeyReleased;
             KeyReleased += EscapeReleased;
-            PauseHandler = (s, e) => { };
+            PauseHandler = (s, e) => 
+            PlayerDeadHandler = (s, e) => { };
             world = new(seed);
             MouseMove = (s, e) => world.MouseMove(e);
             MouseClick = (s, e) => world.MouseClick(e);
@@ -31,6 +33,10 @@ namespace CourseWork
             if (!Pause)
             {
                 world.Update(clock.ElapsedTime.AsMilliseconds());
+                if (!world.Player.Alive)
+                {
+                    PlayerDeadHandler.Invoke(null, null);
+                }
                 //Game stats
                 Console.SetCursorPosition(0, 0);
                 Console.WriteLine($"Player map position: X({(int)world.Player.TruePosition.X}) Y({(int)world.Player.TruePosition.Y}) [{(int)world.Player.TruePosition.X / Tile.TileSize}][{(int)world.Player.TruePosition.Y / Tile.TileSize}]          ");

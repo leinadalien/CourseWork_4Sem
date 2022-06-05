@@ -16,6 +16,7 @@ namespace CourseWork
         public static Game Game { private set; get; }
         private static Menu mainMenu;
         private static Menu pauseMenu;
+        private static Menu deathMenu;
         private static Updater updater;
         private static void NewGame()
         {
@@ -39,6 +40,21 @@ namespace CourseWork
                 };
                 window.MouseMoved += pauseMenu.MoveHundler;
                 window.MouseButtonReleased += pauseMenu.ClickHandler;
+            };
+            Game.PlayerDeadHandler += (s, e) =>
+            {
+                window.KeyPressed -= Game.KeyPressed;
+                window.KeyReleased -= Game.KeyReleased;
+                window.MouseMoved -= Game.MouseMove;
+                window.MouseButtonReleased -= Game.MouseClick;
+                updater = () =>
+                {
+                    window.Clear(Color.Black);
+                    Game.Draw();
+                    window.Draw(deathMenu);
+                };
+                window.MouseMoved += deathMenu.MoveHundler;
+                window.MouseButtonReleased += deathMenu.ClickHandler;
             };
             updater = () =>
             {
@@ -102,6 +118,11 @@ namespace CourseWork
             Button ToMainButton = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => MainMenu() };
             pauseMenu.AddButton(ContinueButton);
             pauseMenu.AddButton(ToMainButton);
+
+            deathMenu = new((Vector2f)window.Size, "You dead");
+            Button RestartButton = new("Restart", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => NewGame() };
+            deathMenu.AddButton(RestartButton);
+            deathMenu.AddButton(ToMainButton);
 
             window.Closed += (s, e) => window.Close();
             MainMenu();
