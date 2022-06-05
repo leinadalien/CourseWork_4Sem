@@ -12,7 +12,7 @@ namespace CourseWork
         public EventHandler<KeyEventArgs> KeyReleased { get; set; }
         public EventHandler<MouseMoveEventArgs> MouseMove { get; set; }
         public EventHandler<MouseButtonEventArgs> MouseClick { get; set; }
-        public EventHandler PauseHundler { get; set; }
+        public EventHandler PauseHandler { get; set; }
         private World world;
         private Clock clock;
         public Game(int seed)
@@ -22,7 +22,7 @@ namespace CourseWork
             KeyReleased += EscapeReleased;
             MouseMove = (s, e) => { };
             MouseClick = (s, e) => { };
-            PauseHundler = (s, e) => { };
+            PauseHandler = (s, e) => { };
             world = new(seed);
             clock = new Clock();
         }
@@ -124,7 +124,7 @@ namespace CourseWork
                 Pause = !Pause;
                 if (Pause)
                 {
-                    PauseHundler.Invoke(sender, e);
+                    PauseHandler.Invoke(sender, e);
                 }
             }
         }
