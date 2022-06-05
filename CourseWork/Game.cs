@@ -8,12 +8,14 @@ namespace CourseWork
     public class Game
     {
         public bool Pause = false;
+        private Sprite heart = new(Content.HeartTexture);
+        private Sprite key = new(Content.KeyTexture);
         public EventHandler<KeyEventArgs> KeyPressed { get; set; }
         public EventHandler<KeyEventArgs> KeyReleased { get; set; }
-        public EventHandler<MouseMoveEventArgs> MouseMove { get; set; }
         public EventHandler<MouseButtonEventArgs> MouseClick { get; set; }
         public EventHandler PauseHandler { get; set; }
         public EventHandler PlayerDeadHandler { get; set; }
+        public EventHandler PlayerWinHandler { get; set; }
         private World world;
         private Clock clock;
         public Game(int seed)
@@ -21,40 +23,55 @@ namespace CourseWork
             KeyPressed = MovePlayer;
             KeyReleased = MovementKeyReleased;
             KeyReleased += EscapeReleased;
-            PauseHandler = (s, e) => 
+            PauseHandler = (s, e) => { };
             PlayerDeadHandler = (s, e) => { };
+            PlayerWinHandler = (s, e) => { };
             world = new(seed);
-            MouseMove = (s, e) => world.MouseMove(e);
             MouseClick = (s, e) => world.MouseClick(e);
             clock = new Clock();
         }
         public void Update()
         {
+            int deltaTime = clock.ElapsedTime.AsMilliseconds();
             if (!Pause)
             {
-                world.Update(clock.ElapsedTime.AsMilliseconds());
+                world.Update(deltaTime);
                 if (!world.Player.Alive)
                 {
                     PlayerDeadHandler.Invoke(null, null);
                 }
-                //Game stats
-                Console.SetCursorPosition(0, 0);
-                Console.WriteLine($"Player map position: X({(int)world.Player.TruePosition.X}) Y({(int)world.Player.TruePosition.Y}) [{(int)world.Player.TruePosition.X / Tile.TileSize}][{(int)world.Player.TruePosition.Y / Tile.TileSize}]          ");
-                Console.WriteLine($"Player Camera position: X({(int)(world.Player.Position.X + world.Position.X)}) Y({(int)(world.Player.Position.Y + world.Position.Y)})          ");
+                if (world.PlayerAtHome)
+                {
+                    PlayerWinHandler.Invoke(null, null);
+                }
+            }/*
+            //Game stats (for debug)
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine($"Player map position: X({(int)world.Player.TruePosition.X}) Y({(int)world.Player.TruePosition.Y}) [{(int)world.Player.TruePosition.X / Tile.TileSize}][{(int)world.Player.TruePosition.Y / Tile.TileSize}]          ");
+            Console.WriteLine($"Player Camera position: X({(int)(world.Player.Position.X + world.Position.X)}) Y({(int)(world.Player.Position.Y + world.Position.Y)})          ");
 
-                Console.WriteLine($"Camera position: X({-(int)world.Position.X}) Y({-(int)world.Position.Y})      ");
-                Console.WriteLine($"Camera X: [{0 - (int)world.Position.X / Tile.TileSize},{Program.Window.Size.X / Tile.TileSize + 1 - (int)world.Position.X / Tile.TileSize}]    ");
-                Console.WriteLine($"Camera Y: [{0 - (int)world.Position.Y / Tile.TileSize},{Program.Window.Size.Y / Tile.TileSize + 1 - (int)world.Position.Y / Tile.TileSize}]    ");
-                Console.WriteLine((1000 / (clock.ElapsedTime.AsMilliseconds() + 1)) + "fps  ");
-                Console.WriteLine($"World compression: {World.Compression}");
-                Console.WriteLine($"Find Key: {world.Player.WithKey}");
-                Console.WriteLine($"Player health: {world.Player.Health}");
-                clock.Restart();
-            }
+            Console.WriteLine($"Camera position: X({-(int)world.Position.X}) Y({-(int)world.Position.Y})      ");
+            Console.WriteLine($"Camera X: [{0 - (int)world.Position.X / Tile.TileSize},{Program.Window.Size.X / Tile.TileSize + 1 - (int)world.Position.X / Tile.TileSize}]    ");
+            Console.WriteLine($"Camera Y: [{0 - (int)world.Position.Y / Tile.TileSize},{Program.Window.Size.Y / Tile.TileSize + 1 - (int)world.Position.Y / Tile.TileSize}]    ");
+            Console.WriteLine((1000 / (clock.ElapsedTime.AsMilliseconds() + 1)) + "fps  ");
+            Console.WriteLine($"World compression: {World.Compression}");
+            Console.WriteLine($"Find Key: {world.Player.WithKey}");
+            Console.WriteLine($"Player health: {world.Player.Health}");*/
+            clock.Restart();
         }
         public void Draw()
         {
             Program.Window.Draw(world);
+            for (int i = 0; i < world.Player.Health; i++)
+            {
+                heart.Position = new(Tile.TileSize / 2 + i * Tile.TileSize, Tile.TileSize / 2);
+                Program.Window.Draw(heart);
+            }
+            if (world.Player.WithKey)
+            {
+                key.Position = new(Program.Window.Size.X - Tile.TileSize * 1.5f, 0);
+                Program.Window.Draw(key);
+            }
         }
         private void MovePlayer(object? sender, KeyEventArgs e)
         {
@@ -128,9 +145,9 @@ namespace CourseWork
         {
             if (e.Code == Keyboard.Key.Escape)
             {
-                Pause = !Pause;
-                if (Pause)
+                if (!Pause)
                 {
+                    Pause = true;
                     PauseHandler.Invoke(sender, e);
                 }
             }

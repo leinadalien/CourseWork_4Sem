@@ -1,4 +1,5 @@
-﻿using CourseWork.Objects;
+﻿using CourseWork.Entities;
+using CourseWork.Objects;
 using SFML.Graphics;
 using SFML.System;
 using System;
@@ -47,6 +48,10 @@ namespace CourseWork.Locations
                         {
                             Objects.Add(new Grass(random.Next(4)) { TruePosition = new Vector2f(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2) + TruePosition, Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
                         }
+                    }
+                    else if (random.NextDouble() > 0.9975)
+                    {
+                        Wolves.Add(new(this) { TruePosition = new Vector2f(j * Tile.TileSize, i * Tile.TileSize) + TruePosition });
                     }
                 }
             }

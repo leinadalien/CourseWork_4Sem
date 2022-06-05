@@ -4,36 +4,34 @@ using CourseWork.Objects;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CourseWork
 {
     public class World : Transformable, Drawable
     {
+        public bool PlayerAtHome = false;
         public static float Compression = 0.5f;
         private Location firstLocation;
         private Location keyLocation;
+        private House playerHouse;
         private List<Location> locations;
         private List<Location> transitions;
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
         private RectangleShape darkness;
         public List<Entity> Entities { get; } = new();
+        public List<House> Houses { get; } = new();
         public Player Player;
         private Key key;
         private FloatRect drawingBounds;
         private Tile[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i extraSpace = new(5, 30);
-        private Vector2i mapSize = new(192, 192);//192
+        private Vector2i mapSize = new(96, 96);//192
         private Vector2f size;
         public List<Location> Locations { get { return locations; } }
         public List<Location> Transitions { get { return transitions; } }
-        public List<Object> DrawableObjects { get; }
+        private List<Object> drawableObjects { get; }
         private void UpdateSize(Location location)
         {
             Vector2f deltaPosition = new(0, 0);
@@ -59,7 +57,7 @@ namespace CourseWork
         public World(int seed)
         {
             size = new(mapSize.X * Tile.TileSize, mapSize.Y * Tile.TileSize);
-            DrawableObjects = new();
+            drawableObjects = new();
             transitions = new();
             locations = new();
             tiles = new Tile[mapSize.Y, mapSize.X];
@@ -71,7 +69,7 @@ namespace CourseWork
             firstLocation = locations[random.Next(locations.Count)];
             Player = new(firstLocation) { TruePosition = firstLocation.StartPosition + firstLocation.TruePosition };
             Entities.Add(Player);
-            Entities.Add(new Wolf(firstLocation) { Target = Player, TruePosition = firstLocation.StartPosition + firstLocation.TruePosition });
+            GenerateEntities();
             darkness = new((Vector2f)Program.Window.Size);
             darkness.Texture = Content.DarknessTexture;
         }
@@ -126,8 +124,7 @@ namespace CourseWork
                 }
             }
             
-        }
-        
+        }  
         private void GenerateTiles(Random random)
         {
             foreach (Location location in locations)
@@ -256,6 +253,11 @@ namespace CourseWork
                     
                 }
             }
+            foreach (Location location in locations)
+            {
+                AddObjects(location.GenerateObjects(random));
+                Houses.AddRange(location.Houses);
+            }
             keyLocation = locations[random.Next(locations.Count)];
             key = new() { TruePosition = new Vector2f(random.Next(keyLocation.TileCount.X) * Tile.TileSize, random.Next(keyLocation.TileCount.Y) * Tile.TileSize) + keyLocation.TruePosition };
             foreach (Object obj in keyLocation.Objects.ToList())
@@ -266,10 +268,6 @@ namespace CourseWork
                 }
             }
             keyLocation.Objects.Add(key);
-            foreach (Location location in locations)
-            {
-                AddObjects(location.GenerateObjects(random));
-            }
             foreach (Transition transition in transitions)
             {
                 List<Object> transitionObjects = transition.GenerateObjects(random);
@@ -294,6 +292,18 @@ namespace CourseWork
                     }
                 }
             }
+            playerHouse = Houses[random.Next(Houses.Count)];
+        }
+        private void GenerateEntities()
+        {
+            foreach (Transition transiton in transitions)
+            {
+                foreach (Wolf wolf in transiton.Wolves)
+                {
+                    wolf.Target = Player;
+                    Entities.Add(wolf);
+                }
+            }
         }
         public void Update(int deltatime)
         {
@@ -306,6 +316,11 @@ namespace CourseWork
                 Player.WithKey = true;
                 RemoveObject(key);
                 keyLocation.Objects.Remove(key);
+                playerHouse.IsTrigger = true;
+            }
+            if (Player.Intersects(playerHouse))
+            {
+                PlayerAtHome = true;
             }
             size.Y = mapSize.Y * Tile.TileSize;
             UpdatePosition();
@@ -358,7 +373,7 @@ namespace CourseWork
                     tiles[i, j].Draw(target, states);
                 }
             }
-            foreach (Object drawableObject in DrawableObjects)
+            foreach (Object drawableObject in drawableObjects)
             {
                 if (drawableObject.DrawableBounds.Intersects(drawingBounds))
                 {
@@ -374,11 +389,11 @@ namespace CourseWork
         public void AddObject(Object obj)
         {
             int index = 0;
-            while (index < DrawableObjects.Count && obj.CompareTo(DrawableObjects[index]) >= 1)
+            while (index < drawableObjects.Count && obj.CompareTo(drawableObjects[index]) >= 1)
             {
                 index++;
             }
-            DrawableObjects.Insert(index, obj);
+            drawableObjects.Insert(index, obj);
         }
         public void AddObjects(List<Object> objects)
         {
@@ -389,38 +404,20 @@ namespace CourseWork
         }
         public void RemoveObject(Object obj)
         {
-            DrawableObjects.Remove(obj);
+            drawableObjects.Remove(obj);
         }
         public void MouseClick(MouseButtonEventArgs args)
         {
-            foreach (Object obj in DrawableObjects.Where(x => x.TruePosition != Player.TruePosition))
+            FloatRect touchableBounds = new(new(Player.TruePosition.X - Player.VisibilityRadius, Player.TruePosition.Y - Player.VisibilityRadius), new Vector2f(2f, 2f) * Player.VisibilityRadius);
+            foreach (Entity entity in Entities.Where(x => x.TruePosition != Player.TruePosition))
             {
-                FloatRect objBounds = obj.DrawableBounds;
-                objBounds.Left += Position.X;
-                objBounds.Top += Position.Y;
-                if (objBounds.Contains(args.X, args.Y))
+                FloatRect entityBounds = entity.DrawableBounds;
+                entityBounds.Left += Position.X;
+                entityBounds.Top += Position.Y;
+                if (entityBounds.Contains(args.X, args.Y) && touchableBounds.Intersects(entity.Bounds))
                 {
-                    obj.Opacity = 0.2f;
-                }
-                else
-                {
-                    obj.Opacity = 1;
-                }
-            }
-        }
-        public void MouseMove(MouseMoveEventArgs args)
-        {
-            foreach(Object obj in DrawableObjects)
-            {
-                FloatRect objBounds = obj.DrawableBounds;
-                objBounds.Left += Position.X;
-                objBounds.Top += Position.Y;
-                if (objBounds.Contains(args.X, args.Y))
-                {
-                    obj.Opacity = 0.2f;
-                }else
-                {
-                    obj.Opacity = 1;
+                    entity.Health--;
+                    break;
                 }
             }
         }

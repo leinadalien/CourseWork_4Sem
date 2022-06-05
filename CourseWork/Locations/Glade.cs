@@ -30,7 +30,9 @@ namespace CourseWork.Locations
                     {
                         if (random.NextDouble() > 0.5)
                         {
-                            Objects.Add(new House() { TruePosition = new Vector2f(j * Tile.TileSize, i * Tile.TileSize) + TruePosition });
+                            House house = new() { TruePosition = new Vector2f(j * Tile.TileSize, i * Tile.TileSize) + TruePosition };
+                            Objects.Add(house);
+                            Houses.Add(house);
                         }
                     }
                     else if (i % 16 > 5 || j % 8 < 4)

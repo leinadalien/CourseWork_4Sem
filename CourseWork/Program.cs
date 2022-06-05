@@ -17,23 +17,25 @@ namespace CourseWork
         private static Menu mainMenu;
         private static Menu pauseMenu;
         private static Menu deathMenu;
+        private static Menu winMenu;
         private static Updater updater;
-        private static void NewGame()
+        private static void NewGame(Menu sender)
         {
             
             DrawLoading();
             Random random = new();
             Game = new(random.Next());
-            window.MouseButtonReleased -= mainMenu.ClickHandler;
-            window.MouseMoved -= mainMenu.MoveHundler;
+            window.MouseButtonReleased -= sender.ClickHandler;
+            window.MouseMoved -= sender.MoveHundler;
+
             Game.PauseHandler += (s, e) =>
             {
                 window.KeyPressed -= Game.KeyPressed;
                 window.KeyReleased -= Game.KeyReleased;
-                window.MouseMoved -= Game.MouseMove;
                 window.MouseButtonReleased -= Game.MouseClick;
                 updater = () =>
                 {
+                    Game.Update();
                     window.Clear(Color.Black);
                     Game.Draw();
                     window.Draw(pauseMenu);
@@ -45,7 +47,6 @@ namespace CourseWork
             {
                 window.KeyPressed -= Game.KeyPressed;
                 window.KeyReleased -= Game.KeyReleased;
-                window.MouseMoved -= Game.MouseMove;
                 window.MouseButtonReleased -= Game.MouseClick;
                 updater = () =>
                 {
@@ -56,6 +57,20 @@ namespace CourseWork
                 window.MouseMoved += deathMenu.MoveHundler;
                 window.MouseButtonReleased += deathMenu.ClickHandler;
             };
+            Game.PlayerWinHandler += (s, e) =>
+            {
+                window.KeyPressed -= Game.KeyPressed;
+                window.KeyReleased -= Game.KeyReleased;
+                window.MouseButtonReleased -= Game.MouseClick;
+                updater = () =>
+                {
+                    window.Clear(Color.Black);
+                    Game.Draw();
+                    window.Draw(winMenu);
+                };
+                window.MouseMoved += winMenu.MoveHundler;
+                window.MouseButtonReleased += winMenu.ClickHandler;
+            };
             updater = () =>
             {
                 Game.Update();
@@ -64,7 +79,6 @@ namespace CourseWork
             };
             window.KeyPressed += Game.KeyPressed;
             window.KeyReleased += Game.KeyReleased;
-            window.MouseMoved += Game.MouseMove;
             window.MouseButtonReleased += Game.MouseClick;
         }
         private static void ContinueGame()
@@ -81,15 +95,14 @@ namespace CourseWork
             window.KeyPressed += Game.KeyPressed;
             window.KeyReleased += Game.KeyReleased;
             window.MouseButtonReleased += Game.MouseClick;
-            window.MouseMoved += Game.MouseMove;
         }
-        private static void MainMenu()
+        private static void MainMenu(Menu sender)
         {
             Text gameName = new("Red Riding Hood:", Content.Font, 20);
             gameName.Origin = new(gameName.GetLocalBounds().Width / 2, 0);
             gameName.Position = new((float)window.Size.X / 2, 220);
-            window.MouseButtonReleased -= pauseMenu.ClickHandler;
-            window.MouseMoved -= pauseMenu.MoveHundler;
+            window.MouseButtonReleased -= sender.ClickHandler;
+            window.MouseMoved -= sender.MoveHundler;
             updater = () =>
             {
                 window.Clear(Color.Black);
@@ -103,29 +116,36 @@ namespace CourseWork
         {
             ContextSettings settings = new();
             settings.AntialiasingLevel = 8;
-            window = new(new(1280, 720), "Title", Styles.Close, settings);
+            window = new(new(1280, 720), "Red Riding Hood: Way home", Styles.Close, settings);
 
-            Button PlayButton = new("New game", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s,e) => NewGame() };
+            Button m1 = new("Play", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s,e) => NewGame(mainMenu) };
             //Button LoadButton = new("Load game", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White };
-            Button ExitButton = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => window.Close() };
+            Button m3 = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => window.Close() };
             mainMenu = new((Vector2f)window.Size, "Way Home");
-            mainMenu.AddButton(PlayButton);
+            mainMenu.AddButton(m1);
             //mainMenu.AddButton(LoadButton);
-            mainMenu.AddButton(ExitButton);
+            mainMenu.AddButton(m3);
 
             pauseMenu = new((Vector2f)window.Size, "Pause");
-            Button ContinueButton = new("Continue", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => ContinueGame() };
-            Button ToMainButton = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => MainMenu() };
-            pauseMenu.AddButton(ContinueButton);
-            pauseMenu.AddButton(ToMainButton);
+            Button p1 = new("Continue", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => ContinueGame() };
+            Button p2 = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => MainMenu(pauseMenu) };
+            pauseMenu.AddButton(p1);
+            pauseMenu.AddButton(p2);
 
             deathMenu = new((Vector2f)window.Size, "You dead");
-            Button RestartButton = new("Restart", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => NewGame() };
-            deathMenu.AddButton(RestartButton);
-            deathMenu.AddButton(ToMainButton);
+            Button d1 = new("Restart", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => NewGame(deathMenu) };
+            Button d2 = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => MainMenu(deathMenu) };
+            deathMenu.AddButton(d1);
+            deathMenu.AddButton(d2);
+
+            winMenu = new((Vector2f)window.Size, "YOU SURVIVED!!!");
+            Button w1 = new("New game", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => NewGame(winMenu) };
+            Button w2 = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => MainMenu(winMenu) };
+            winMenu.AddButton(w1);
+            winMenu.AddButton(w2);
 
             window.Closed += (s, e) => window.Close();
-            MainMenu();
+            MainMenu(pauseMenu);
 
             while (window.IsOpen)
             {

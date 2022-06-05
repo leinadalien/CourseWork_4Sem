@@ -17,8 +17,8 @@ namespace CourseWork.Entities
         {
             size = new(Tile.TileSize, Tile.TileSize * 2, Tile.TileSize);
             sprite.Texture = Content.PlayerTexture;
-            MovementSpeed = 1f;
-            VisibilityRadius = 20 * Tile.TileSize;//20
+            MovementSpeed = 0.3f;
+            VisibilityRadius = 5 * Tile.TileSize;//20
             Origin = new(size.X / 2, size.Y);
             Location = location;
             prevPosition = TruePosition;

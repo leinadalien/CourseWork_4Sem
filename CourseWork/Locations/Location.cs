@@ -1,4 +1,6 @@
-﻿using SFML.Graphics;
+﻿using CourseWork.Entities;
+using CourseWork.Objects;
+using SFML.Graphics;
 using SFML.System;
 
 namespace CourseWork
@@ -12,7 +14,8 @@ namespace CourseWork
         public IntRect IntBounds { get; protected set; }
         public Vector2i TileCount { get; protected set; } = new(32, 32);
         protected List<Location> connectedLocations;
-        
+        public List<Wolf> Wolves { get; } = new();
+        public List<House> Houses { get; } = new();
         public List<Location> ConnectedLocations { get { return connectedLocations; } }
         public List<Object> Objects { get; }
         public Vector2f StartPosition { get; set; }
@@ -83,6 +86,5 @@ namespace CourseWork
         {
             connectedLocations.Add(location);
         }
-        
     }
 }

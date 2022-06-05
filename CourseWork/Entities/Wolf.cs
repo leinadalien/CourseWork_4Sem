@@ -10,14 +10,14 @@ namespace CourseWork.Entities
 {
     public class Wolf : Entity
     {
-        private float timeForBite = 1000;
-        private float timeBite = 0;
-        public Entity Target { get; set; }
+        private float timeForBite = 2000;
+        private float timeBite = 2000;
+        public Entity? Target { get; set; } = null;
         public Wolf(Location location) : base(location)
         {
             Health = 3;
             VisibilityRadius = 10 * Tile.TileSize;
-            MovementSpeed = 0.5f;
+            MovementSpeed = 0.4f;
             size = new(Tile.TileSize * 1.5f, Tile.TileSize, Tile.TileSize);
             sprite.Texture = Content.WolfTexture;
             Origin = new(size.X / 2, size.Y);
@@ -49,45 +49,55 @@ namespace CourseWork.Entities
             {
                 if (Target != null && Target.Bounds.Intersects(new(new(TruePosition.X - VisibilityRadius, TruePosition.Y - VisibilityRadius), new Vector2f(2f,2f) * VisibilityRadius)))
                 {
+                    timeBite += deltaTime;
                     if (Intersects(Target) && Target.Alive)
                     {
-                        timeBite += deltaTime;
+                        
                         if (timeBite > timeForBite)
                         {
-                            timeBite -= timeForBite;
+                            timeBite = 0;
                             Target.Health--;
                         }
                         Movement = new(0, 0);
                     }
                     else
                     {
-                        timeBite = 0;
-                        if (Target.TruePosition.X - TruePosition.X != 0)
+                        if (Target.TruePosition.X - TruePosition.X > 3)
                         {
-                            Movement.X = (Target.TruePosition.X - TruePosition.X > 0 ? 1 : -1) * MovementSpeed;
+                            Movement.X = MovementSpeed;
+                        }
+                        else if (Target.TruePosition.X - TruePosition.X < -3)
+                        {
+                            Movement.X = -MovementSpeed;
                         }
                         else
                         {
                             Movement.X = 0;
                         }
-                        if (Target.TruePosition.Y - TruePosition.Y != 0)
+                        if (Target.TruePosition.Y - TruePosition.Y > 3)
                         {
-                            Movement.Y = (Target.TruePosition.Y - TruePosition.Y > 0 ? 1 : -1) * MovementSpeed;
+                            Movement.Y = MovementSpeed;
+                        }
+                        else if (Target.TruePosition.Y - TruePosition.Y < -3)
+                        {
+                            Movement.Y = -MovementSpeed;
                         }
                         else
                         {
                             Movement.Y = 0;
                         }
-                    }
-                    
-                    
+                    }   
                 }
                 else
                 {
-                    Movement = new(0,0);
+                    Movement = new(0, 0);
                 }
-                base.Update(deltaTime);
             }
+            else
+            {
+                Movement = new(0, 0);
+            }
+            base.Update(deltaTime);
             Animate(deltaTime);
         }
         public override FloatRect Bounds { get { return new(new Vector2f(TruePosition.X - Origin.X, TruePosition.Y - size.Z), new(size.X, size.Z)); } }
