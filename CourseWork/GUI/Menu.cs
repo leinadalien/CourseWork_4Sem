@@ -11,19 +11,35 @@ namespace CourseWork.GUI
 {
     public class Menu : Transformable, Drawable
     {
-        public Vector2f Size { get; set; }
+        private float buttonOffset = 0;
+        private RectangleShape background;
+        private Vector2f size;
+        private Text topText = new("Menu", Content.Font, 50);
         public EventHandler<MouseMoveEventArgs> MoveHundler { get; }
         public EventHandler<MouseButtonEventArgs> ClickHandler { get; }
-        protected List<Button> buttons;
-        public Menu()
+        private List<Button> buttons = new();
+        public Menu(Vector2f size, string text)
         {
-            Size = new(500, 500);
-            buttons = new List<Button>();
+            topText = new(text, Content.Font, 50);
+            this.size = size;
+            topText.Origin = new(topText.GetLocalBounds().Width / 2, 0);
+            topText.Position = new(size.X / 2, 250);
+            background = new(size);
+            background.FillColor = new(0, 0, 0, 127);
             MoveHundler = MouseMove;
             ClickHandler = MouseClick;
         }
+        public void AddButton(Button button)
+        {
+            buttons.Add(button);
+            button.Origin = new(button.Bounds.Width / 2, button.Bounds.Height / 2);
+            button.Position = new(size.X / 2, size.Y / 2 + buttonOffset);
+            buttonOffset += button.Bounds.Height + 20;
+        }
         public virtual void Draw(RenderTarget target, RenderStates states)
         {
+            background.Draw(target, states);
+            topText.Draw(target, states);
             states.Transform *= Transform;
             foreach (var button in buttons)
             {

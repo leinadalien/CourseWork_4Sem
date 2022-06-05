@@ -10,16 +10,16 @@ namespace CourseWork
 {
     internal class Program
     {
-
         private delegate void Updater();
         private static RenderWindow window;
         public static RenderWindow Window { get { return window; } }
         public static Game Game { private set; get; }
-        private static MainMenu mainMenu;
-        private static PauseMenu pauseMenu;
+        private static Menu mainMenu;
+        private static Menu pauseMenu;
         private static Updater updater;
         private static void NewGame()
         {
+            
             DrawLoading();
             Random random = new();
             Game = new(random.Next());
@@ -69,13 +69,16 @@ namespace CourseWork
         }
         private static void MainMenu()
         {
+            Text gameName = new("Red Riding Hood:", Content.Font, 20);
+            gameName.Origin = new(gameName.GetLocalBounds().Width / 2, 0);
+            gameName.Position = new((float)window.Size.X / 2, 220);
             window.MouseButtonReleased -= pauseMenu.ClickHandler;
             window.MouseMoved -= pauseMenu.MoveHundler;
             updater = () =>
             {
-
                 window.Clear(Color.Black);
                 window.Draw(mainMenu);
+                window.Draw(gameName);
             };
             window.MouseMoved += mainMenu.MoveHundler;
             window.MouseButtonReleased += mainMenu.ClickHandler;
@@ -85,14 +88,24 @@ namespace CourseWork
             ContextSettings settings = new();
             settings.AntialiasingLevel = 8;
             window = new(new(1280, 720), "Title", Styles.Close, settings);
-            mainMenu = new((Vector2f)window.Size);
-            pauseMenu = new((Vector2f)window.Size);
-            MainMenu();
-            pauseMenu.ContinueButton.Click = (s, e) => ContinueGame();
-            pauseMenu.ExitToMainMenuButton.Click = (s, e) => MainMenu();
-            mainMenu.PlayButton.Click += (s, e) => NewGame();
-            mainMenu.ExitButton.Click += (s, e) => window.Close();
+
+            Button PlayButton = new("New game", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s,e) => NewGame() };
+            //Button LoadButton = new("Load game", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White };
+            Button ExitButton = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => window.Close() };
+            mainMenu = new((Vector2f)window.Size, "Way Home");
+            mainMenu.AddButton(PlayButton);
+            //mainMenu.AddButton(LoadButton);
+            mainMenu.AddButton(ExitButton);
+
+            pauseMenu = new((Vector2f)window.Size, "Pause");
+            Button ContinueButton = new("Continue", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => ContinueGame() };
+            Button ToMainButton = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => MainMenu() };
+            pauseMenu.AddButton(ContinueButton);
+            pauseMenu.AddButton(ToMainButton);
+
             window.Closed += (s, e) => window.Close();
+            MainMenu();
+
             while (window.IsOpen)
             {
                 window.DispatchEvents();

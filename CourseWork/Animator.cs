@@ -31,7 +31,7 @@ namespace CourseWork
         public void Walk(int deltaTime, Vector2f movement)
         {
             currentFrame = deltaTime * AnimationSpeed * MovementSpeed + walkFrame;
-            currentFrame %= frames;
+            currentFrame %= 3;
             if (movement.X > 0)
             {
                 facingRight = true;
@@ -59,7 +59,7 @@ namespace CourseWork
                 sprite.TextureRect = new(((int)currentFrame + 1) * frameWidth, 0, -frameWidth, frameHeight);
             }
         }
-        private void Death()
+        public void Death()
         {
             currentFrame = 3;
             currentFrame %= frames;

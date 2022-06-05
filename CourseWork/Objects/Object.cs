@@ -2,7 +2,6 @@
 using SFML.System;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +12,9 @@ namespace CourseWork
     {
         protected Sprite sprite;
         protected Vector3f size;
-        protected float brightness;
+        protected Color color = new(255, 255, 255, 255);
+        protected float brightness = 1;
+        protected float opacity = 1;
         public bool IsTrigger { get; set; } = false;
         public Vector2f TruePosition { get; set; }
         public float Brightness
@@ -22,8 +23,20 @@ namespace CourseWork
             set
             {
                 brightness = value;
-                byte br = (byte)(brightness * 256);
-                sprite.Color = new(br,br,br);
+                byte r = (byte)(brightness * color.R);
+                byte g = (byte)(brightness * color.G);
+                byte b = (byte)(brightness * color.B);
+                sprite.Color = new(r, g, b, sprite.Color.A);
+            }
+        }
+        public float Opacity
+        {
+            get { return opacity; }
+            set
+            {
+                opacity = value;
+                byte a = (byte)(opacity * 255);
+                sprite.Color = new(sprite.Color.R, sprite.Color.G, sprite.Color.B, a);
             }
         }
         public FloatRect DrawableBounds { get { return new( new(TruePosition.X - Origin.X, TruePosition.Y * World.Compression - Origin.Y), new(size.X, size.Y)); } }

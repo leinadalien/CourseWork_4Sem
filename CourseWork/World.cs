@@ -22,13 +22,14 @@ namespace CourseWork
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
         private RectangleShape darkness;
+        public List<Entity> Entities { get; } = new();
         public Player Player;
         private Key key;
         private FloatRect drawingBounds;
         private Tile[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i extraSpace = new(5, 30);
-        private Vector2i mapSize = new(96, 96);//192
+        private Vector2i mapSize = new(192, 192);//192
         private Vector2f size;
         public List<Location> Locations { get { return locations; } }
         public List<Location> Transitions { get { return transitions; } }
@@ -68,8 +69,9 @@ namespace CourseWork
             GenerateTiles(random);
             GenerateObjects(random);
             firstLocation = locations[random.Next(locations.Count)];
-            Player = new(firstLocation);
-            Player.TruePosition = firstLocation.StartPosition + firstLocation.TruePosition;
+            Player = new(firstLocation) { TruePosition = firstLocation.StartPosition + firstLocation.TruePosition };
+            Entities.Add(Player);
+            Entities.Add(new Wolf(firstLocation) { Target = Player, TruePosition = firstLocation.StartPosition + firstLocation.TruePosition });
             darkness = new((Vector2f)Program.Window.Size);
             darkness.Texture = Content.DarknessTexture;
         }
@@ -295,7 +297,10 @@ namespace CourseWork
         }
         public void Update(int deltatime)
         {
-            Player.Update(deltatime);
+            foreach (Entity entity in Entities)
+            {
+                entity.Update(deltatime);
+            }
             if (Player.Intersects(key))
             {
                 Player.WithKey = true;
@@ -307,8 +312,7 @@ namespace CourseWork
             darkness.Position = -Position;
             UpdateDrawableObjects();
             Compression = (Player.TruePosition.Y / (mapSize.Y * Tile.TileSize) - 0.5f) * 0.3f + 0.3f;
-            RemoveObject(Player);
-            AddObject(Player);
+            
         }
         public virtual void UpdateDrawableObjects()
         {
@@ -339,6 +343,10 @@ namespace CourseWork
         }
         public void Draw(RenderTarget target, RenderStates states)
         {
+            foreach (Entity entity in Entities)
+            {
+                AddObject(entity);
+            }
             states.Transform *= Transform;
             for (int i = (int)(firstDrawingPoint.Y / Tile.TileSize / Compression); i <= (int)(lastDrawingPoint.Y / Tile.TileSize / Compression); i++)
             {
@@ -356,6 +364,10 @@ namespace CourseWork
                 {
                     drawableObject.Draw(target, states);
                 }
+            }
+            foreach (Entity entity in Entities)
+            {
+                RemoveObject(entity);
             }
             target.Draw(darkness, states);
         }
@@ -381,17 +393,34 @@ namespace CourseWork
         }
         public void MouseClick(MouseButtonEventArgs args)
         {
-            if (args.Button == Mouse.Button.Left)
+            foreach (Object obj in DrawableObjects.Where(x => x.TruePosition != Player.TruePosition))
             {
-                foreach (Object obj in Player.Location.Objects)
+                FloatRect objBounds = obj.DrawableBounds;
+                objBounds.Left += Position.X;
+                objBounds.Top += Position.Y;
+                if (objBounds.Contains(args.X, args.Y))
                 {
-                    FloatRect objBounds = obj.DrawableBounds;
-                    objBounds.Left += Position.X;
-                    objBounds.Top += Position.Y;
-                    if (objBounds.Contains(args.X, args.Y))
-                    {
-                        obj.IsTrigger = true;
-                    }
+                    obj.Opacity = 0.2f;
+                }
+                else
+                {
+                    obj.Opacity = 1;
+                }
+            }
+        }
+        public void MouseMove(MouseMoveEventArgs args)
+        {
+            foreach(Object obj in DrawableObjects)
+            {
+                FloatRect objBounds = obj.DrawableBounds;
+                objBounds.Left += Position.X;
+                objBounds.Top += Position.Y;
+                if (objBounds.Contains(args.X, args.Y))
+                {
+                    obj.Opacity = 0.2f;
+                }else
+                {
+                    obj.Opacity = 1;
                 }
             }
         }

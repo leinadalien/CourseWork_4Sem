@@ -18,6 +18,6 @@ namespace CourseWork.Objects
             sprite.Texture = Content.KeyTexture;
             sprite.TextureRect = new IntRect(0, 0, (int)size.X, (int)size.Y);
         }
-        public override FloatRect Bounds { get { return new(TruePosition, new(size.X, size.Z)); } }
+        public override FloatRect Bounds { get { return new(TruePosition - new Vector2f(size.X, size.Z), new(size.X * 3, size.Z * 3)); } }
     }
 }
