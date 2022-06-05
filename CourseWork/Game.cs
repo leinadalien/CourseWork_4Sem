@@ -8,8 +8,11 @@ namespace CourseWork
     public class Game
     {
         public bool Pause = false;
-        public EventHandler<KeyEventArgs> KeyPressed { get; }
-        public EventHandler<KeyEventArgs> KeyReleased {  get; }
+        public EventHandler<KeyEventArgs> KeyPressed { get; set; }
+        public EventHandler<KeyEventArgs> KeyReleased { get; set; }
+        public EventHandler<MouseMoveEventArgs> MouseMove { get; set; }
+        public EventHandler<MouseButtonEventArgs> MouseClick { get; set; }
+        public EventHandler PauseHundler { get; set; }
         private World world;
         private Clock clock;
         public Game(int seed)
@@ -17,6 +20,9 @@ namespace CourseWork
             KeyPressed = MovePlayer;
             KeyReleased = MovementKeyReleased;
             KeyReleased += EscapeReleased;
+            MouseMove = (s, e) => { };
+            MouseClick = (s, e) => { };
+            PauseHundler = (s, e) => { };
             world = new(seed);
             clock = new Clock();
         }
@@ -116,6 +122,10 @@ namespace CourseWork
             if (e.Code == Keyboard.Key.Escape)
             {
                 Pause = !Pause;
+                if (Pause)
+                {
+                    PauseHundler.Invoke(sender, e);
+                }
             }
         }
     }

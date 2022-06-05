@@ -21,6 +21,7 @@ namespace CourseWork
             settings.AntialiasingLevel = 8;
             window = new(new(1280, 720), "Title", Styles.Close, settings);
             MainMenu mainMenu = new((Vector2f)window.Size);
+            PauseMenu pauseMenu = new((Vector2f)window.Size);
             window.MouseMoved += mainMenu.MoveHundler;
             window.MouseButtonReleased += mainMenu.ClickHandler;
             updater = () =>
@@ -28,7 +29,33 @@ namespace CourseWork
                 window.Clear(Color.Black);
                 window.Draw(mainMenu);
             };
-
+            pauseMenu.ContinueButton.Click = (s, e) =>
+            {
+                updater = () =>
+                {
+                    Game.Update();
+                    window.Clear(Color.Black);
+                    Game.Draw();
+                };
+                Game.Pause = false;
+                window.MouseMoved -= pauseMenu.MoveHundler;
+                window.MouseButtonReleased -= pauseMenu.ClickHandler;
+                window.MouseButtonReleased += Game.MouseClick;
+                window.MouseMoved += Game.MouseMove;
+            };
+            pauseMenu.ExitToMainMenuButton.Click = (s, e) => {
+                
+                updater = () =>
+                {
+                    
+                    window.Clear(Color.Black);
+                    window.Draw(mainMenu);
+                };
+                window.MouseButtonReleased -= pauseMenu.ClickHandler;
+                window.MouseMoved -= pauseMenu.MoveHundler;
+                window.MouseMoved += mainMenu.MoveHundler;
+                window.MouseButtonReleased += mainMenu.ClickHandler;
+            };
             mainMenu.PlayButton.Click += (s, e) =>
             {
                 Random random = new Random();
@@ -37,6 +64,19 @@ namespace CourseWork
                 window.MouseMoved -= mainMenu.MoveHundler;
                 window.KeyPressed += Game.KeyPressed;
                 window.KeyReleased += Game.KeyReleased;
+                Game.PauseHundler += (s, e) =>
+                {
+                    updater = () =>
+                    {
+                        window.Clear(Color.Black);
+                        Game.Draw();
+                        window.Draw(pauseMenu);
+                        window.MouseMoved += pauseMenu.MoveHundler;
+                        window.MouseButtonReleased += pauseMenu.ClickHandler;
+                        window.MouseButtonReleased -= Game.MouseClick;
+                        window.MouseMoved -= Game.MouseMove;
+                    };
+                };
                 updater = () =>
                 {
                     Game.Update();
