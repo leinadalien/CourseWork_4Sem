@@ -6,6 +6,11 @@ namespace CourseWork
 {
     public abstract class Entity : Object
     {
+
+        protected Animator animator;
+        public float MovementSpeed = 0.15f;
+        public Vector2f Movement;
+        protected Vector2f prevPosition;
         public int VisibilityRadius { get; set; } = 10;
         protected Entity()
         {

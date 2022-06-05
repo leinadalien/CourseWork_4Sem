@@ -21,9 +21,10 @@ namespace CourseWork
             KeyReleased = MovementKeyReleased;
             KeyReleased += EscapeReleased;
             MouseMove = (s, e) => { };
-            MouseClick = (s, e) => { };
             PauseHandler = (s, e) => { };
             world = new(seed);
+
+            MouseClick = (s, e) => world.MouseClick(e);
             clock = new Clock();
         }
         public void Update()
@@ -41,7 +42,7 @@ namespace CourseWork
                 Console.WriteLine($"Camera Y: [{0 - (int)world.Position.Y / Tile.TileSize},{Program.Window.Size.Y / Tile.TileSize + 1 - (int)world.Position.Y / Tile.TileSize}]    ");
                 Console.WriteLine((1000 / (clock.ElapsedTime.AsMilliseconds() + 1)) + "fps  ");
                 Console.WriteLine($"World compression: {World.Compression}");
-
+                Console.WriteLine($"Find Key: {world.Player.WithKey}");
                 clock.Restart();
             }
         }

@@ -10,22 +10,27 @@ namespace CourseWork
 {
     public class Animator
     {
+        int frameWidth;
+        int frameHeight;
+        private float walkFrame = 0;
         private float currentFrame = 0;
         public float AnimationSpeed = 0.03f;
         private bool facingRight = true;
         private int frames;
         public float MovementSpeed;
         private Sprite sprite;
-        public Animator(int frames, Sprite sprite, float animationSpeed = 0.03f, float movementspeed = 1f)
+        public Animator(int frames, Sprite sprite, int frameWidth, int frameHeight, float animationSpeed = 0.03f, float movementspeed = 1f)
         {
             this.frames = frames;
             this.sprite = sprite;
+            this.frameWidth = frameWidth;
+            this.frameHeight = frameHeight;
             AnimationSpeed = animationSpeed;
             MovementSpeed = movementspeed;
         }
         public void Walk(int deltaTime, Vector2f movement)
         {
-            currentFrame += deltaTime * AnimationSpeed * MovementSpeed;
+            currentFrame = deltaTime * AnimationSpeed * MovementSpeed + walkFrame;
             currentFrame %= frames;
             if (movement.X > 0)
             {
@@ -36,6 +41,7 @@ namespace CourseWork
                 facingRight = false;
             }
             UpdateFrame();
+            walkFrame = currentFrame;
         }
         public void Idle()
         {
@@ -46,12 +52,18 @@ namespace CourseWork
         {
             if (facingRight)
             {
-                sprite.TextureRect = new((int)currentFrame * Tile.TileSize, 0, Tile.TileSize, Tile.TileSize * 2);
+                sprite.TextureRect = new((int)currentFrame * frameWidth, 0, frameWidth, frameHeight);
             }
             else
             {
-                sprite.TextureRect = new(((int)currentFrame + 1) * Tile.TileSize, 0, -Tile.TileSize, Tile.TileSize * 2);
+                sprite.TextureRect = new(((int)currentFrame + 1) * frameWidth, 0, -frameWidth, frameHeight);
             }
+        }
+        private void Death()
+        {
+            currentFrame = 3;
+            currentFrame %= frames;
+            UpdateFrame();
         }
     }
 }

@@ -12,11 +12,12 @@ namespace CourseWork.Objects
     {
         public Key()
         {
+            IsTrigger = true;
             size = new(Tile.TileSize, Tile.TileSize, Tile.TileSize);
-            Origin = new(Tile.TileSize, size.Y);
+            Origin = new(0, size.Y);
             sprite.Texture = Content.KeyTexture;
             sprite.TextureRect = new IntRect(0, 0, (int)size.X, (int)size.Y);
         }
-        public override FloatRect Bounds { get { return new(0, 0, 0, 0); } }
+        public override FloatRect Bounds { get { return new(TruePosition, new(size.X, size.Z)); } }
     }
 }

@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using CourseWork.Objects;
+using SFML.Graphics;
 using SFML.System;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,32 @@ namespace CourseWork.Locations
 
         public override List<Object> GenerateObjects(Random random)
         {
+            for (int i = 0; i < TileCount.Y; i++)
+            {
+                for (int j = 0; j < TileCount.X; j++)
+                {
+                    if (random.NextDouble() > 0.7)
+                    {
+                        double randomObject = random.NextDouble();
+                        if (randomObject > 0.98)
+                        {
+                            Objects.Add(new HighTree(random.Next(4)) { TruePosition = new Vector2f(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2) + TruePosition, Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
+                        }
+                        else if (randomObject > 0.97)
+                        {
+                            Objects.Add(new FatTree(random.Next(2)) { TruePosition = new Vector2f(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2) + TruePosition, Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
+                        }
+                        else if (randomObject > 0.92)
+                        {
+                            Objects.Add(new Stone(random.Next(4)) { TruePosition = new Vector2f(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2) + TruePosition, Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
+                        }
+                        else
+                        {
+                            Objects.Add(new Grass(random.Next(4)) { TruePosition = new Vector2f(j * Tile.TileSize, i * Tile.TileSize + Tile.TileSize / 2) + TruePosition, Brightness = (float)random.NextDouble() * 0.5f + 0.5f });
+                        }
+                    }
+                }
+            }
             return Objects;
         }
     }

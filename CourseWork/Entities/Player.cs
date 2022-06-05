@@ -11,10 +11,7 @@ namespace CourseWork.Entities
 {
     public class Player : Entity
     {
-        private Animator animator;
-        public float MovementSpeed = 0.15f;
-        public Vector2f Movement;
-        private Vector2f prevPosition;
+        public bool WithKey = false;
         public Location Location { get; set; }
         public override FloatRect Bounds { get { return new(new Vector2f(TruePosition.X - Origin.X, TruePosition.Y - size.Z), new(size.X, size.Z)); } }
         public Player(Location location)
@@ -26,7 +23,7 @@ namespace CourseWork.Entities
             Origin = new(size.X / 2, size.Y);
             Location = location;
             prevPosition = TruePosition;
-            animator = new(3, sprite, 0.03f, MovementSpeed);
+            animator = new(3, sprite, (int)size.X, (int)size.Y, 0.03f, MovementSpeed);
             animator.Idle();
         }
         public override void Draw(RenderTarget target, RenderStates states)
@@ -102,7 +99,7 @@ namespace CourseWork.Entities
             Vector2f result = firstPositon;
             foreach (var collisionObject in location.Objects)
             {
-                if (Intersects(collisionObject))
+                if (Intersects(collisionObject) && !collisionObject.IsTrigger)
                 {
                     Vector2f insidePosition = new(TruePosition.X, TruePosition.Y);
                     TruePosition = new(prevPosition.X, insidePosition.Y);

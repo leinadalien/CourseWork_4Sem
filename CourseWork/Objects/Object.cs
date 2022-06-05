@@ -14,6 +14,7 @@ namespace CourseWork
         protected Sprite sprite;
         protected Vector3f size;
         protected float brightness;
+        public bool IsTrigger { get; set; } = false;
         public Vector2f TruePosition { get; set; }
         public float Brightness
         {

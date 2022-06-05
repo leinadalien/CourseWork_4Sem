@@ -12,6 +12,7 @@ namespace CourseWork.Objects
     {
         public Grass(int id)
         {
+            IsTrigger = true;
             id %= 4;
             size = new(Tile.TileSize, Tile.TileSize, Tile.TileSize);
             Origin = new(0, size.Y);
@@ -19,6 +20,6 @@ namespace CourseWork.Objects
             sprite.TextureRect = new IntRect(id * (int)size.X, 0, (int)size.X, (int)size.Y);
         }
 
-        public override FloatRect Bounds { get { return new(0, 0, 0, 0); } }
+        public override FloatRect Bounds { get { return new(TruePosition, new(size.X, size.Z)); } }
     }
 }

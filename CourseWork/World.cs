@@ -3,6 +3,7 @@ using CourseWork.Locations;
 using CourseWork.Objects;
 using SFML.Graphics;
 using SFML.System;
+using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +15,20 @@ namespace CourseWork
     public class World : Transformable, Drawable
     {
         public static float Compression = 0.5f;
+        private Location firstLocation;
+        private Location keyLocation;
         private List<Location> locations;
         private List<Location> transitions;
         protected Vector2f firstDrawingPoint;
         protected Vector2f lastDrawingPoint;
         private RectangleShape darkness;
         public Player Player;
+        private Key key;
         private FloatRect drawingBounds;
         private Tile[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i extraSpace = new(5, 30);
-        private Vector2i mapSize = new(192, 192);//192
+        private Vector2i mapSize = new(96, 96);//192
         private Vector2f size;
         public List<Location> Locations { get { return locations; } }
         public List<Location> Transitions { get { return transitions; } }
@@ -63,8 +67,9 @@ namespace CourseWork
             GenerateTransitions(random);
             GenerateTiles(random);
             GenerateObjects(random);
-            Player = new(locations.First());
-            Player.TruePosition = locations.First().StartPosition + locations.First().TruePosition;
+            firstLocation = locations[random.Next(locations.Count)];
+            Player = new(firstLocation);
+            Player.TruePosition = firstLocation.StartPosition + firstLocation.TruePosition;
             darkness = new((Vector2f)Program.Window.Size);
             darkness.Texture = Content.DarknessTexture;
         }
@@ -139,7 +144,6 @@ namespace CourseWork
             {
                 IntRect bounds = location.IntBounds;
                 Tile[,] locationTiles = location.GenerateTiles(random);
-                
                 for (int i = 0; i < bounds.Height; i++)
                 {
                     for (int j = 0; j < bounds.Width; j++)
@@ -250,15 +254,54 @@ namespace CourseWork
                     
                 }
             }
+            keyLocation = locations[random.Next(locations.Count)];
+            key = new() { TruePosition = new Vector2f(random.Next(keyLocation.TileCount.X) * Tile.TileSize, random.Next(keyLocation.TileCount.Y) * Tile.TileSize) + keyLocation.TruePosition };
+            foreach (Object obj in keyLocation.Objects.ToList())
+            {
+                if (key.Intersects(obj))
+                {
+                    keyLocation.Objects.Remove(obj);
+                }
+            }
+            keyLocation.Objects.Add(key);
             foreach (Location location in locations)
             {
                 AddObjects(location.GenerateObjects(random));
+            }
+            foreach (Transition transition in transitions)
+            {
+                List<Object> transitionObjects = transition.GenerateObjects(random);
+                foreach (Object obj in transitionObjects.ToList())
+                {
+                    bool intersected = false;
+                    foreach (Location location in locations)
+                    {
+                        if (obj.Intersects(location))
+                        {
+                            intersected = true;
+                            break;
+                        }
+                    }
+                    if (!intersected)
+                    {
+                        AddObject(obj);
+                    }
+                    else
+                    {
+                        transition.Objects.Remove(obj);
+                    }
+                }
             }
         }
         public void Update(int deltatime)
         {
             Player.Update(deltatime);
-
+            if (Player.Intersects(key))
+            {
+                Player.WithKey = true;
+                RemoveObject(key);
+                keyLocation.Objects.Remove(key);
+            }
             size.Y = mapSize.Y * Tile.TileSize;
             UpdatePosition();
             darkness.Position = -Position;
@@ -335,6 +378,22 @@ namespace CourseWork
         public void RemoveObject(Object obj)
         {
             DrawableObjects.Remove(obj);
+        }
+        public void MouseClick(MouseButtonEventArgs args)
+        {
+            if (args.Button == Mouse.Button.Left)
+            {
+                foreach (Object obj in Player.Location.Objects)
+                {
+                    FloatRect objBounds = obj.DrawableBounds;
+                    objBounds.Left += Position.X;
+                    objBounds.Top += Position.Y;
+                    if (objBounds.Contains(args.X, args.Y))
+                    {
+                        obj.IsTrigger = true;
+                    }
+                }
+            }
         }
     }
 }
