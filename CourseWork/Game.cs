@@ -43,6 +43,7 @@ namespace CourseWork
                 }
                 if (world.PlayerAtHome)
                 {
+                    world.Player.Score *= world.Player.Health;
                     PlayerWinHandler.Invoke(null, null);
                 }
                 timeForScore += deltaTime;

@@ -27,7 +27,7 @@ namespace CourseWork
         private Tile[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i extraSpace = new(5, 30);
-        private Vector2i mapSize = new(106, 156);//192
+        private Vector2i mapSize = new(154, 206);//192 (144)
         private Vector2f size;
         public List<Location> Locations { get { return locations; } }
         public List<Location> Transitions { get { return transitions; } }
