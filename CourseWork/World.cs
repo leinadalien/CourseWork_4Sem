@@ -267,7 +267,7 @@ namespace CourseWork
                     keyLocation.Objects.Remove(obj);
                 }
             }
-            keyLocation.Objects.Add(key);
+            AddObject(key);
             foreach (Transition transition in transitions)
             {
                 List<Object> transitionObjects = transition.GenerateObjects(random);
