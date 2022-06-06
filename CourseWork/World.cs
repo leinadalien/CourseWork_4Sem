@@ -27,7 +27,7 @@ namespace CourseWork
         private Tile[,] tiles;
         private Vector2f topLeftPoint = new(0, 0);
         private Vector2i extraSpace = new(5, 30);
-        private Vector2i mapSize = new(96, 96);//192
+        private Vector2i mapSize = new(106, 156);//192
         private Vector2f size;
         public List<Location> Locations { get { return locations; } }
         public List<Location> Transitions { get { return transitions; } }
@@ -414,11 +414,16 @@ namespace CourseWork
                 FloatRect entityBounds = entity.DrawableBounds;
                 entityBounds.Left += Position.X;
                 entityBounds.Top += Position.Y;
-                if (entityBounds.Contains(args.X, args.Y) && touchableBounds.Intersects(entity.Bounds))
+                if (entity.Alive && entityBounds.Contains(args.X, args.Y) && touchableBounds.Intersects(entity.Bounds))
                 {
                     entity.Health--;
+                    if (entity.Health == 0)
+                    {
+                        Player.Score += 3;
+                    }
                     break;
-                }
+                    
+                };
             }
         }
     }

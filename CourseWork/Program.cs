@@ -128,9 +128,11 @@ namespace CourseWork
 
             pauseMenu = new((Vector2f)window.Size, "Pause");
             Button p1 = new("Continue", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => ContinueGame() };
-            Button p2 = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => MainMenu(pauseMenu) };
+            Button p2 = new("Restart", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => NewGame(pauseMenu) };
+            Button p3 = new("Exit", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => MainMenu(pauseMenu) };
             pauseMenu.AddButton(p1);
             pauseMenu.AddButton(p2);
+            pauseMenu.AddButton(p3);
 
             deathMenu = new((Vector2f)window.Size, "You dead");
             Button d1 = new("Restart", new(200, 50)) { FillColor = Color.Black, TextColor = Color.White, OutlineThickness = 5, OutlineColor = Color.White, Click = (s, e) => NewGame(deathMenu) };

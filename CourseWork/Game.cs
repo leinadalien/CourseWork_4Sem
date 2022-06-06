@@ -7,6 +7,7 @@ namespace CourseWork
 {
     public class Game
     {
+        int timeForScore = 0;
         public bool Pause = false;
         private Sprite heart = new(Content.HeartTexture);
         private Sprite key = new(Content.KeyTexture);
@@ -44,6 +45,12 @@ namespace CourseWork
                 {
                     PlayerWinHandler.Invoke(null, null);
                 }
+                timeForScore += deltaTime;
+                if (timeForScore > 15000)
+                {
+                    timeForScore -= 15000;
+                    world.Player.Score--;
+                }
             }/*
             //Game stats (for debug)
             Console.SetCursorPosition(0, 0);
@@ -72,6 +79,9 @@ namespace CourseWork
                 key.Position = new(Program.Window.Size.X - Tile.TileSize * 1.5f, 0);
                 Program.Window.Draw(key);
             }
+            Text score = new($"Score: {((world.Player.Score > 0) ? world.Player.Score : 0)}", Content.Font, 30);
+            score.Position = new(Program.Window.Size.X / 2 - score.GetLocalBounds().Width / 2, Tile.TileSize / 2);
+            Program.Window.Draw(score);
         }
         private void MovePlayer(object? sender, KeyEventArgs e)
         {

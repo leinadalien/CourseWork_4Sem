@@ -11,6 +11,7 @@ namespace CourseWork.Entities
 {
     public class Player : Entity
     {
+        public int Score = 0;
         public bool WithKey = false;
         public override FloatRect Bounds { get { return new(new Vector2f(TruePosition.X - Origin.X, TruePosition.Y - size.Z), new(size.X, size.Z)); } }
         public Player(Location location) : base(location)
