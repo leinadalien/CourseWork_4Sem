@@ -8,6 +8,8 @@ namespace CourseWork
     public class Game
     {
         int timeForScore = 0;
+        Text score = new("Score: 0", Content.Font, 50);
+        Text seed;
         public bool Pause = false;
         private Sprite heart = new(Content.HeartTexture);
         private Sprite key = new(Content.KeyTexture);
@@ -21,6 +23,8 @@ namespace CourseWork
         private Clock clock;
         public Game(int seed)
         {
+            this.seed = new("Seed: " + seed, Content.Font, 20);
+            this.seed.Position = new(10, Program.Window.Size.Y - score.GetLocalBounds().Height - 5);
             KeyPressed = MovePlayer;
             KeyReleased = MovementKeyReleased;
             KeyReleased += EscapeReleased;
@@ -80,9 +84,10 @@ namespace CourseWork
                 key.Position = new(Program.Window.Size.X - Tile.TileSize * 1.5f, 0);
                 Program.Window.Draw(key);
             }
-            Text score = new($"Score: {((world.Player.Score > 0) ? world.Player.Score : 0)}", Content.Font, 30);
+            score.DisplayedString = new($"Score: {((world.Player.Score > 0) ? world.Player.Score : 0)}");
             score.Position = new(Program.Window.Size.X / 2 - score.GetLocalBounds().Width / 2, Tile.TileSize / 2);
             Program.Window.Draw(score);
+            Program.Window.Draw(seed);
         }
         private void MovePlayer(object? sender, KeyEventArgs e)
         {
