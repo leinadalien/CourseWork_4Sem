@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CourseWork.Entity">
+    <Position X="6" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAQACAYAAIAAAgAANAIAAAAAAAgAAAQQAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Entity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Entities.Player">
+    <Position X="8.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAgAAAAAAAQAAABAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Entities\Player.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Entities.Wolf">
+    <Position X="8.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAACAAAAAAAAAAAAACQAAAAAIAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Entities\Wolf.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Object">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAkAAABABBAgQAAIAAAEAgABAAAICAAAAAACAAApA=</HashCode>
+      <FileName>Objects\Object.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CourseWork.Location">
+    <Position X="0.5" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AICCAAIAEAAAAAAAAIAAAAAAAAQBAAEAAAIAAIAAAwI=</HashCode>
+      <FileName>Locations\Location.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Locations.Glade">
+    <Position X="3.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Locations\Glade.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Locations.Transition">
+    <Position X="3.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Locations\Transition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Objects.FatTree">
+    <Position X="10.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Objects\FatTree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Objects.Grass">
+    <Position X="12.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Objects\Grass.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Objects.HighTree">
+    <Position X="14.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Objects\HighTree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Objects.House">
+    <Position X="16.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Objects\House.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Objects.Key">
+    <Position X="18.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Objects\Key.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Objects.Stone">
+    <Position X="20.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Objects\Stone.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.World">
+    <Position X="22.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAQiJSIAAAAAGiAiAIYEgAADJgQCiAAAEAMACQAAAQg=</HashCode>
+      <FileName>World.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CourseWork.Game">
+    <Position X="20.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQgFEGAAAAAYgIACAAMAAAAAAAAAAAAAAACIBBgAAA=</HashCode>
+      <FileName>Game.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Content">
+    <Position X="7.25" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAIAAYAAAAAAAAAAAAAACAAAAAAgIAgEEAAAAgCKAAA=</HashCode>
+      <FileName>Content.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Animator">
+    <Position X="9.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABBgCAAAAAAAAAAIAAAABgAYAAgAAAgAQAAAAA=</HashCode>
+      <FileName>Animator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Map">
+    <Position X="18.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAACAAAAAAEAAAAAQCAAAgEAIAgA=</HashCode>
+      <FileName>Map.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Program">
+    <Position X="12" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="CourseWork.Program.Updater" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Program.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAgAAAAAAAIAASBAgAEAAIAAAADAAAAAE=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CourseWork.Tile" BaseTypeListCollapsed="true">
+    <Position X="2.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAgECAAAAAAAAABABAICAAQAAAAAAAIA=</HashCode>
+      <FileName>Tile.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CourseWork.GUI.Button">
+    <Position X="16" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAACgAIAAAAAQAAAAAAQAAACAAgAAgABgA=</HashCode>
+      <FileName>GUI\Button.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CourseWork.GUI.Menu">
+    <Position X="14" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAgAAIIAACAAAQAAAACAAAAAAAICAIBA=</HashCode>
+      <FileName>GUI\Menu.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Struct Name="CourseWork.TileState">
+    <Position X="5.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAQAAAAAAAIA=</HashCode>
+      <FileName>Tile.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="CourseWork.TileType">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAoAAAAAAAAAAAAAAQAgAAAAA=</HashCode>
+      <FileName>Tile.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
